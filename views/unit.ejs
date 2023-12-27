@@ -5,6 +5,9 @@
 <!-- Vector Map css -->
 <link rel="stylesheet" href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+
+
 <%- contentFor('body') %>
 
 <!-- end row -->
@@ -66,12 +69,13 @@
             </div>
             <div class="modal-body">
                <label for="">Unit</label>
-               <input type="text" class="form-control">
+               <input type="text" class="form-control" id="unit_name">
+               <input type="hidden" id="hidden" name="" id="">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-              =
-                <button type="button" class="btn btn-primary">Save changes</button>
+              
+                <button type="button" class="btn btn-primary" onclick="submit()">Save changes</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -81,12 +85,109 @@
 
 <!-- Vector Map js -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
 var table = new DataTable('#basic-datatable');
 $('document').ready(function(){
     fetch();
 
 })
+
+function submit(){
+
+    var update_id = $('#hidden').val();
+    if(update_id == ""){
+    var form = new FormData();
+        form.append("unit", document.getElementById("unit_name").value);
+       
+
+        var settings = {
+            "url": "/unit",
+            "method": "POST",
+            "timeout": 0,
+            "processData": false,
+            "mimeType": "multipart/form-data",
+            "contentType": false,
+            "data": form
+        };
+
+        $.ajax({
+            ...settings,
+            statusCode: {
+                200: function(response) {
+                    console.log(response);
+                    console.log("Request was successful");
+                   
+                   
+                 
+                    Swal.fire(
+                        'Success!',
+                        'Unit Created Successfully',
+                        'success'
+                    )
+                },
+            },
+            success: function(data) {
+                // $('#myModal').reset();
+                // Additional success handling if needed
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log(xhr)
+                Swal.fire(
+                    'Server Error!',
+                    'User Not Created',
+                    'error'
+                )
+            }
+        });
+    }
+    else{
+        var form = new FormData();
+    form.append("unit", document.getElementById("unit_name").value);
+
+
+
+        var settings = {
+            "url": "/unit/" + update_id, // Fixed the URL concatenation
+            "method": "PUT",
+            "timeout": 0,
+            "processData": false,
+            "mimeType": "multipart/form-data",
+            "contentType": false,
+            "data": form
+        };
+
+        $.ajax({
+            ...settings,
+            success: function (data) {
+                console.log(data);
+                console.log("Request was successful");
+
+                Swal.fire(
+                    'Success!',
+                    'Unit Updated Successfully',
+                    'success'
+                );
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log(xhr);
+                Swal.fire(
+                    'Server Error!',
+                    'User Not Created',
+                    'error'
+                );
+            }
+        });
+            }
+
+}
+
+function edit(id){
+    $('#top-modal').modal('show');
+    $('#hidden').val(id);
+
+}
+
 
 function fetch(){
 var settings = {
@@ -104,7 +205,7 @@ $.ajax(settings).done(function(response) {
             data.unit,
             data.created_at,
             data.updated_at,
-            '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="editData(' +
+            '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="edit(' +
             data.id +
             ')"  class="btn btn-soft-secondary "style="padding:5px 10px;" ><i class="ri ri-pencil-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
             ]).draw(false);

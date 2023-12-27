@@ -3,25 +3,31 @@
 <link rel="stylesheet" href="assets/vendor/daterangepicker/daterangepicker.css">
 
 <!-- Vector Map css -->
-<link rel="stylesheet" href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet"
+    href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
+<link rel="stylesheet"
+    href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+
 <%- contentFor('body') %>
 
 <!-- end row -->
-
 
 <div class="row mt-5">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h1 class="header-title" class="mb-6" style="font-size: 20px;">Ingredients</h1>
+                <h1 class="header-title" class="mb-6"
+                    style="font-size: 20px;">Ingredients</h1>
                 <br>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#top-modal">Add</button>
+                <button type="button" class="btn btn-secondary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#top-modal">Add</button>
                 <br>
                 <br>
 
-
-                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                <table id="basic-datatable"
+                    class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>S NO#</th>
@@ -29,67 +35,165 @@
                             <th>Unit</th>
                             <th>Created At</th>
                             <th>Updated At</th>
-                           
+                            <th>Edit</th>
+
                         </tr>
-                    </thead>         
-                
+                    </thead>
+
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Chicken</td>
-                            <td>KG</td>
-                            <td>2023-12-26 13:52:38.547514</td>
-                            <td>2023-12-26 13:52:38.547514</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Mutton</td>
-                            <td>Pounds</td>
-                            <td>2023-12-26 13:52:38.547514</td>
-                            <td>2023-12-26 13:52:38.547514</td>
-                        </tr>
-                        
+
                     </tbody>
-                </table> 
+                </table>
 
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
 </div> <!-- end row-->
 
-
-<div id="top-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="top-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="topModalLabel">Add Ingredient</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
-               <label for="">Ingredient</label>
-               <input type="text" class="form-control">
-               <label for="">Unit</label>
-               <input type="text" class="form-control">
+                <label for>Ingredient</label>
+                <input type="text" class="form-control" id="ingredient">
+                <label for>Unit</label>
+                <select  id="unit" class="form-select">
+                </select>
+                <input type="hidden" id="hidden">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-light"
+                    data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submit()">Save
+                    changes</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div
+    </div
 
-<%- contentFor('FooterJs') %>
+    <%- contentFor('FooterJs') %>
 
-<!-- Vector Map js -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script>
+    <!-- Vector Map js -->
+    <script
+        src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script>
 
 let table = new DataTable('#basic-datatable');
 $('document').ready(function(){
     fetch();
 
 })
+
+
+function submit(){
+
+var update_id = $('#hidden').val();
+alert(document.getElementById("ingredient").value);
+alert(document.getElementById("unit").value)
+
+if(update_id == ""){
+var form = new FormData();
+    form.append("name", document.getElementById("ingredient").value);
+    form.append("unit", document.getElementById("unit").value);
+   
+
+    var settings = {
+        "url": "/ingredient",
+        "method": "POST",
+        "timeout": 0,
+        "processData": false,
+        "mimeType": "multipart/form-data",
+        "contentType": false,
+        "data": form
+    };
+
+    $.ajax({
+        ...settings,
+        statusCode: {
+            200: function(response) {
+                console.log(response);
+                console.log("Request was successful");
+               
+               
+             
+                Swal.fire(
+                    'Success!',
+                    'Ingredients Created Successfully',
+                    'success'
+                )
+            },
+        },
+        success: function(data) {
+            // $('#myModal').reset();
+            // Additional success handling if needed
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            console.log(xhr)
+            Swal.fire(
+                'Server Error!',
+                'Ingredients Not Created',
+                'error'
+            )
+        }
+    });
+}
+else{
+    var form = new FormData();
+    form.append("ingredient", document.getElementById("ingredient").value);
+    form.append("unit_id", document.getElementById("unit").value);
+
+
+
+    var settings = {
+        "url": "/ingredient/" + update_id, // Fixed the URL concatenation
+        "method": "PUT",
+        "timeout": 0,
+        "processData": false,
+        "mimeType": "multipart/form-data",
+        "contentType": false,
+        "data": form
+    };
+
+    $.ajax({
+        ...settings,
+        success: function (data) {
+            console.log(data);
+            console.log("Request was successful");
+
+            Swal.fire(
+                'Success!',
+                'Ingredients Updated Successfully',
+                'success'
+            );
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            Swal.fire(
+                'Server Error!',
+                'Ingredients Not Updated',
+                'error'
+            );
+        }
+    });
+        }
+
+}
+
+function edit(id){
+$('#top-modal').modal('show');
+$('#hidden').val(id);
+
+}
+
 function fetch(){
 var settings = {
     "url": "/ingredient",
@@ -97,6 +201,29 @@ var settings = {
     "timeout": 0,
 };
 
+var selectField = $('#unit');
+selectField.append($('<option>', {
+      value: '',
+      text: 'Select an option'
+    })); 
+    
+    $.ajax({            
+         url: "/unit",
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+        $.each(response, function(index, data) {
+        selectField.append($('<option>', {
+                                    value: data.id, // Assuming each record has an 'id' property
+                                    text: data.unit // Assuming each record has a 'name' property
+                                }));
+                                });
+                        }
+
+                    });
+
+
+   
 $.ajax(settings).done(function(response) {
     console.log(response);
     table.clear().draw();
@@ -104,6 +231,7 @@ $.ajax(settings).done(function(response) {
         table.row.add([
             index + 1,
             data.ingredient,
+            data.unit,
             data.created_at,
             data.updated_at,
             '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="editData(' +
@@ -113,5 +241,7 @@ $.ajax(settings).done(function(response) {
     });
 });
 }
+
+
 
 </script>
