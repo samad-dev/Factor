@@ -76,25 +76,24 @@ route.get('/nutrient/:id', (req, res) => {
 });
 // Create a new user
 route.post('/nutrient', (req, res) => {
-    const { nutrient,nutrient_unit } = req.body;
-    db.query('INSERT INTO `nutrients`(`nutrient`,nutrient_unit) VALUES (?,?)', [nutrient,nutrient_unit], (err, result) => {
-        if (err){
+    const { nutrient, nutrient_unit } = req.body;
+    db.query('INSERT INTO `nutrients`(`nutrient`,nutrient_unit) VALUES (?,?)', [nutrient, nutrient_unit], (err, result) => {
+        if (err) {
 
-            res.json({message:err,status:500})
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
+        else {
             res.json({ message: 'Nutrient added successfully', id: result.insertId });
 
         }
-        
+
     });
 });
 route.put('/nutrient/:id', (req, res) => {
     const { id } = req.params;
-    const { nutrient,nutrient_unit } = req.body;
+    const { nutrient, nutrient_unit } = req.body;
     console.log(id);
-    db.query('UPDATE `nutrients` SET `nutrient` = ?,nutrient_unit = ? WHERE `id` = ?;', [nutrient, nutrient_unit,id], (err) => {
+    db.query('UPDATE `nutrients` SET `nutrient` = ?,nutrient_unit = ? WHERE `id` = ?;', [nutrient, nutrient_unit, id], (err) => {
         if (err) throw err;
         res.json({ message: 'Nutrient updated successfully' });
     });
@@ -138,7 +137,7 @@ route.put('/prefs/:id', (req, res) => {
     const { id } = req.params;
     const { pref } = req.body;
     console.log(id);
-    db.query('UPDATE `prefernces` SET `preference` = ? WHERE `id` = ?;', [pref,id], (err) => {
+    db.query('UPDATE `prefernces` SET `preference` = ? WHERE `id` = ?;', [pref, id], (err) => {
         if (err) throw err;
         res.json({ message: 'Preference updated successfully' });
     });
@@ -171,23 +170,22 @@ route.get('/unit/:id', (req, res) => {
 route.post('/unit', (req, res) => {
     const { unit } = req.body;
     db.query('INSERT INTO `units`(`unit`) VALUES (?)', [unit], (err, result) => {
-        if (err){
+        if (err) {
 
-            res.json({message:err,status:500})
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
+        else {
             res.json({ message: 'Units added successfully', id: result.insertId });
 
         }
-        
+
     });
 });
 route.put('/unit/:id', (req, res) => {
     const { id } = req.params;
     const { unit } = req.body;
     console.log(id);
-    db.query('UPDATE `units` SET `unit` = ?WHERE `id` = ?;', [unit,id], (err) => {
+    db.query('UPDATE `units` SET `unit` = ?WHERE `id` = ?;', [unit, id], (err) => {
         if (err) throw err;
         res.json({ message: 'Unit updated successfully' });
     });
@@ -203,7 +201,7 @@ route.delete('/unit/:id', (req, res) => {
 
 ///////////////////////////UNits API ENDS///////////////////////////////////////////////////
 route.get('/ingredient', (req, res) => {
-    db.query('SELECT * FROM ingredients', (err, results) => {
+    db.query('SELECT i.*,u.unit FROM ingredients i join units u on u.id = i.unit_id', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
@@ -218,32 +216,30 @@ route.get('/ingredient/:id', (req, res) => {
 });
 // Create a new user
 route.post('/ingredient', (req, res) => {
-    const { name,unit } = req.body;
-    db.query('INSERT INTO `ingredients`(`ingredient`,`unit_id`) VALUES (?,?)', [name,unit], (err, result) => {
-        if (err){
+    const { name, unit } = req.body;
+    db.query('INSERT INTO `ingredients`(`ingredient`,`unit_id`) VALUES (?,?)', [name, unit], (err, result) => {
+        if (err) {
 
-            res.json({message:err,status:500})
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
+        else {
             res.json({ message: 'Ingredient added successfully', id: result.insertId });
 
         }
-        
+
     });
 });
 route.put('/ingredient/:id', (req, res) => {
     const { id } = req.params;
-    const { name,unit } = req.body;
+    const { name, unit } = req.body;
     console.log(id);
-    db.query('UPDATE `ingredients` SET `unit_id` = ? and ingredient = ? WHERE `id` = ?;', [unit,name,id], (err) => {
-        if (err){
+    db.query('UPDATE `ingredients` SET `unit_id` = ? and ingredient = ? WHERE `id` = ?;', [unit, name, id], (err) => {
+        if (err) {
 
-            res.json({message:err,status:500})
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
-        res.json({ message: 'Ingredient updated successfully' });
+        else {
+            res.json({ message: 'Ingredient updated successfully' });
         }
     });
 });
@@ -257,9 +253,21 @@ route.delete('/ingredient/:id', (req, res) => {
 ////////////////////////Ingredients API ENDS/////////////////////////////////////////////////
 
 route.get('/dish', (req, res) => {
+    const dish = {};
     db.query('SELECT * FROM dish', (err, results) => {
-        if (err) throw err;
-        res.json(results);
+        if (err) {
+            res.json({ message: err, status: 500 })
+        }
+        else
+        {   console.log(results);
+            for(var a=0;a<=results.length;a++)
+            {
+
+            }
+            res.json(results);
+            // dish.results = results;
+        }
+        // res.json(dish);
     });
 });
 
@@ -272,31 +280,65 @@ route.get('/dish/:id', (req, res) => {
 });
 // Create a new user
 route.post('/dish', (req, res) => {
-    const { dish_name,total_calories,description,instructions,allergens,add_on,label } = req.body;
-    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`) VALUES (?,?,?,?,?,?,?)', [dish_name,total_calories,description,instructions,allergens,add_on,label], (err, result) => {
-        if (err){
-            res.json({message:err,status:500})
+    const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs } = req.body;
+    var ingredient_ids = JSON.parse(ingredient_id);
+    var nut_ids = JSON.parse(nut_id);
+    var qtys = JSON.parse(qty);
+    var nqtys = JSON.parse(nqty);
+    var pref = JSON.parse(prefs);
+    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`) VALUES (?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label], (err, result) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
+        else {
+            for (var i = 0; i < ingredient_ids.length; i++) {
+                db.query('INSERT INTO dish_ingredients (`dish_id`,`ingredient_id`,`ingredient_qty`) VALUES (?,?,?)', [result.insertId, ingredient_ids[i], qtys[i]], (err2, result2) => {
+                    if (err2) {
+                        res.json({ message: err, status: 500 })
+                    }
+
+
+                });
+
+            }
+            for (var i = 0; i < nut_ids.length; i++) {
+                db.query('INSERT INTO dish_nutrients (`dish_id`,`dish_nutrients`,`nutrient_qty`) VALUES (?,?,?)', [result.insertId, nut_ids[i], nqtys[i]], (err2, result2) => {
+                    if (err2) {
+                        res.json({ message: err, status: 500 })
+                    }
+
+
+                });
+
+            }
+            for (var i = 0; i < pref.length; i++) {
+                db.query('INSERT INTO dish_prefernces (`dish_id`,`preference_id`) VALUES (?,?)', [result.insertId, pref[i]], (err2, result2) => {
+                    if (err2) {
+                        res.json({ message: err, status: 500 })
+                    }
+
+
+                });
+
+            }
+
             res.json({ message: 'Dish added successfully', id: result.insertId });
 
         }
-        
+
     });
 });
 route.put('/dish/:id', (req, res) => {
     const { id } = req.params;
-    const { dish_name,total_calories,description,instructions,allergens,add_on,label } = req.body;
+    const { dish_name, total_calories, description, instructions, allergens, add_on, label } = req.body;
     // console.log("UPDATE `factor75`.`dish` SET `dish_name` = '"+dish_name+"', `total_calories` = '"+total_calories+"', `description` = '"+description+"', `instructions` = '"+instructions+"', `allergens` = '"+allergens+"', `add_on` = '"+add_on+"', `label` = '"+label+"' WHERE (`id` = '"+id+"');    ");
-    db.query("UPDATE `factor75`.`dish` SET `dish_name` = '"+dish_name+"', `total_calories` = '"+total_calories+"', `description` = '"+description+"', `instructions` = '"+instructions+"', `allergens` = '"+allergens+"', `add_on` = '"+add_on+"', `label` = '"+label+"' WHERE (`id` = '"+id+"')    ", (err) => {
-        if (err){
+    db.query("UPDATE `factor75`.`dish` SET `dish_name` = '" + dish_name + "', `total_calories` = '" + total_calories + "', `description` = '" + description + "', `instructions` = '" + instructions + "', `allergens` = '" + allergens + "', `add_on` = '" + add_on + "', `label` = '" + label + "' WHERE (`id` = '" + id + "')    ", (err) => {
+        if (err) {
 
-            res.json({message:err,status:500})
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
-        res.json({ message: 'Dish updated successfully' });
+        else {
+            res.json({ message: 'Dish updated successfully' });
         }
     });
 });
@@ -310,7 +352,7 @@ route.delete('/dish/:id', (req, res) => {
 
 //////////////////////////Dish API ENDS///////////////////////////////////////////////////////
 route.get('/dish_ingr', (req, res) => {
-    db.query('SELECT * FROM dish', (err, results) => {
+    db.query('SELECT * FROM dish_ingredients', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
@@ -318,42 +360,45 @@ route.get('/dish_ingr', (req, res) => {
 
 route.get('/dish_ingr/:id', (req, res) => {
     const { id } = req.params;
-    db.query('SELECT * FROM dish WHERE id = ?', [id], (err, results) => {
+    db.query('SELECT * FROM dish_ingredients WHERE id = ?', [id], (err, results) => {
         if (err) throw err;
         res.json(results[0]);
     });
 });
 // Create a new user
 route.post('/dish_ingr', (req, res) => {
-    const { dish_name,total_calories,description,instructions,allergens,add_on,label } = req.body;
-    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`) VALUES (?,?,?,?,?,?,?)', [dish_name,total_calories,description,instructions,allergens,add_on,label], (err, result) => {
-        if (err){
-            res.json({message:err,status:500})
-        }
-        else
-        {
-            res.json({ message: 'Ingredient added successfully', id: result.insertId });
+    const { dish_id, ingredient_id, qty } = req.body;
+    var ingredient_ids = JSON.parse(ingredient_id);
+    var qtys = JSON.parse(qty);
+    console.log(ingredient_ids.length);
 
-        }
-        
-    });
+    for (var i = 0; i < ingredient_ids.length; i++) {
+        db.query('INSERT INTO dish_ingredients (`dish_id`,`ingredient_id`,`ingredient_qty`) VALUES (?,?,?)', [dish_id, ingredient_ids[i], qtys[i]], (err, result) => {
+            if (err) {
+                res.json({ message: err, status: 500 })
+            }
+
+
+        });
+    }
+    res.json({ message: 'Ingredients Assigned successfully' })
+
 });
 route.put('/dish_ingr/:id', (req, res) => {
     const { id } = req.params;
-    const { dish_name,total_calories,description,instructions,allergens,add_on,label } = req.body;
-    db.query("UPDATE `factor75`.`dish` SET `dish_name` = '"+dish_name+"', `total_calories` = '"+total_calories+"', `description` = '"+description+"', `instructions` = '"+instructions+"', `allergens` = '"+allergens+"', `add_on` = '"+add_on+"', `label` = '"+label+"' WHERE (`id` = '"+id+"')    ", (err) => {
-        if (err){
-            res.json({message:err,status:500})
+    const { dish_name, total_calories, description, instructions, allergens, add_on, label } = req.body;
+    db.query("UPDATE `factor75`.`dish_ingredients` SET `dish_name` = '" + dish_name + "', `total_calories` = '" + total_calories + "', `description` = '" + description + "', `instructions` = '" + instructions + "', `allergens` = '" + allergens + "', `add_on` = '" + add_on + "', `label` = '" + label + "' WHERE (`id` = '" + id + "')    ", (err) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
         }
-        else
-        {
-        res.json({ message: 'Dish updated successfully' });
+        else {
+            res.json({ message: 'Dish updated successfully' });
         }
     });
 });
 route.delete('/dish_ingr/:id', (req, res) => {
     const { id } = req.params;
-    db.query('DELETE FROM dish WHERE id = ?', [id], (err) => {
+    db.query('DELETE FROM dish_ingredients WHERE id = ?', [id], (err) => {
         if (err) throw err;
         res.json({ message: 'Dish deleted successfully' });
     });
