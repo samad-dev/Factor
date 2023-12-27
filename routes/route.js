@@ -359,4 +359,26 @@ route.delete('/dish_ingr/:id', (req, res) => {
     });
 });
 
+
+route.get('/', (req, res, next) => {
+    res.render('index', { title: 'Dashboard'});
+})
+route.get('/units', (req, res, next) => {
+    res.render('unit', { title: 'Dashboard'});
+})
+route.get('/ingredients', (req, res, next) => {
+    res.render('ingredients', { title: 'Dashboard'});
+})
+route.get('/nutrients', (req, res, next) => {
+    res.render('nutrients', { title: 'Dashboard'});
+})
+route.get('/preference', (req, res, next) => {
+    res.render('preference', { title: 'Dashboard'});
+})
+route.get('/sub_plan', (req, res, next) => {
+    res.render('plan', { title: 'Dashboard'});
+})
+route.get('/auth-login', (req, res, next) => {
+    res.render('auth/auth-login', { title: 'Login In', layout: false })
+})
 module.exports = route;
