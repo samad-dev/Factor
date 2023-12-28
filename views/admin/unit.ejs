@@ -4,8 +4,14 @@
 
 <!-- Vector Map css -->
 <link rel="stylesheet" href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+<link href="assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet" type="text/css" />
 
 
 <%- contentFor('body') %>
@@ -19,7 +25,7 @@
             <div class="card-body">
                 <h1 class="header-title" class="mb-6" style="font-size: 20px;">Unit Of Measure</h1>
                 <br>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#top-modal">Add</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#top-modal" onclick="clearModalFields()">Add</button>
                 <br>
                 <br>
 
@@ -62,15 +68,17 @@
 
 <div id="top-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" style="padding:10px 20px;">
             <div class="modal-header">
                 <h4 class="modal-title" id="topModalLabel">Add Unit</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-               <label for="">Unit</label>
+                <br>
+               <label style="font-size: 16px;">Unit</label>
                <input type="text" class="form-control" id="unit_name">
                <input type="hidden" id="hidden" name="" id="">
+               <br>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
@@ -84,12 +92,45 @@
 <%- contentFor('FooterJs') %>
 
 <!-- Vector Map js -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+
 <script>
-var table = new DataTable('#basic-datatable');
+  
 $('document').ready(function(){
-    fetch();
+  
+
+// Destroy existing DataTable instance (if it exists)
+if ($.fn.DataTable.isDataTable('#basic-datatable')) {
+    $('#basic-datatable').DataTable().destroy();
+}
+
+$("#basic-datatable").DataTable({
+    keys: true,
+    language: {
+        paginate: {
+            previous: "<i class='ri-arrow-left-s-line'>",
+            next: "<i class='ri-arrow-right-s-line'>"
+        }
+    },
+    drawCallback: function () {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+    }
+});
+  fetch();
 
 })
 
@@ -117,9 +158,9 @@ function submit(){
                 200: function(response) {
                     console.log(response);
                     console.log("Request was successful");
+                    $('#top-modal').modal('hide');
                    
-                   
-                 
+                    fetch()
                     Swal.fire(
                         'Success!',
                         'Unit Created Successfully',
@@ -135,7 +176,7 @@ function submit(){
                 console.log(xhr)
                 Swal.fire(
                     'Server Error!',
-                    'User Not Created',
+                    'Unit Not Created',
                     'error'
                 )
             }
@@ -162,6 +203,9 @@ function submit(){
             success: function (data) {
                 console.log(data);
                 console.log("Request was successful");
+                $('#top-modal').modal('hide');
+                   
+                   fetch()
 
                 Swal.fire(
                     'Success!',
@@ -173,7 +217,7 @@ function submit(){
                 console.log(xhr);
                 Swal.fire(
                     'Server Error!',
-                    'User Not Created',
+                    'Unit Not Updated',
                     'error'
                 );
             }
@@ -183,6 +227,16 @@ function submit(){
 }
 
 function edit(id){
+    clearModalFields();
+    var settings = {
+    "url": "/unit/"+id,
+    "method": "GET",
+    "timeout": 0,
+};
+$.ajax(settings).done(function(response) {
+$('#unit_name').val(response['unit'])
+
+})
     $('#top-modal').modal('show');
     $('#hidden').val(id);
 
@@ -195,6 +249,7 @@ var settings = {
     "method": "GET",
     "timeout": 0,
 };
+var table = new DataTable('#basic-datatable');
 
 $.ajax(settings).done(function(response) {
     console.log(response);
@@ -212,5 +267,27 @@ $.ajax(settings).done(function(response) {
     });
 });
 }
+function clearModalFields() {
+    // Select all input, textarea, and select elements within the modal
+    $('#top-modal :input').each(function() {
+        var elementType = this.type;
+        var elementId = this.id;
+
+        // Handle different input types appropriately
+        switch (elementType) {
+            case 'text':
+            case 'number':
+            case 'file':
+            case 'hidden':
+            case 'textarea':
+            case 'select':
+                $('#' + elementId).val('');
+                break;
+
+            // Add more cases as needed for other input types
+        }
+    });
+}
+
 
 </script>

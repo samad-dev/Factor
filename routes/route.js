@@ -466,19 +466,22 @@ route.get('/', (req, res, next) => {
     res.render('index', { title: 'Dashboard'});
 })
 route.get('/units', (req, res, next) => {
-    res.render('unit', { title: 'Dashboard'});
+    res.render('admin/unit', { title: 'Dashboard'});
 })
 route.get('/ingredients', (req, res, next) => {
-    res.render('ingredients', { title: 'Dashboard'});
+    res.render('admin/ingredients', { title: 'Dashboard'});
 })
 route.get('/nutrients', (req, res, next) => {
-    res.render('nutrients', { title: 'Dashboard'});
+    res.render('admin/nutrients', { title: 'Dashboard'});
 })
 route.get('/preference', (req, res, next) => {
-    res.render('preference', { title: 'Dashboard'});
+    res.render('admin/preference', { title: 'Dashboard'});
 })
 route.get('/sub_plan', (req, res, next) => {
-    res.render('plan', { title: 'Dashboard'});
+    res.render('admin/plan', { title: 'Dashboard'});
+})
+route.get('/dishes', (req, res, next) => {
+    res.render('admin/dish', { title: 'Dashboard'});
 })
 route.get('/auth-login', (req, res, next) => {
     res.render('auth/auth-login', { title: 'Login In', layout: false })

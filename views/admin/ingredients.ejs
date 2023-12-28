@@ -5,9 +5,15 @@
 <!-- Vector Map css -->
 <link rel="stylesheet"
     href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
-<link rel="stylesheet"
-    href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"></link>
+    <link href="assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendor/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    
 
 <%- contentFor('body') %>
 
@@ -22,7 +28,7 @@
                 <br>
                 <button type="button" class="btn btn-secondary"
                     data-bs-toggle="modal"
-                    data-bs-target="#top-modal">Add</button>
+                    data-bs-target="#top-modal" onclick="clearModalFields()">Add</button>
                 <br>
                 <br>
 
@@ -53,19 +59,23 @@
 <div id="top-modal" class="modal fade" tabindex="-1" role="dialog"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" style="padding:10px 20px;">
             <div class="modal-header">
                 <h4 class="modal-title" id="topModalLabel">Add Ingredient</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <label for>Ingredient</label>
+                <br>
+                <label style="font-size: 16px;">Ingredient</label>
                 <input type="text" class="form-control" id="ingredient">
-                <label for>Unit</label>
-                <select  id="unit" class="form-select">
+                <br>
+                <label style="font-size: 16px;">Unit</label>
+        
+                    <select id="unit"class="form-control select2" data-toggle="select2">
                 </select>
                 <input type="hidden" id="hidden">
+                <br>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light"
@@ -80,16 +90,44 @@
     <%- contentFor('FooterJs') %>
 
     <!-- Vector Map js -->
-    <script
-        src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-
+    
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+<script src="assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+<script src="assets/vendor/select2/js/select2.min.js"></script>
 
     <script>
 
-let table = new DataTable('#basic-datatable');
+
 $('document').ready(function(){
-    fetch();
+    if ($.fn.DataTable.isDataTable('#basic-datatable')) {
+    $('#basic-datatable').DataTable().destroy();
+}
+
+$("#basic-datatable").DataTable({
+    keys: true,
+    language: {
+        paginate: {
+            previous: "<i class='ri-arrow-left-s-line'>",
+            next: "<i class='ri-arrow-right-s-line'>"
+        }
+    },
+    drawCallback: function () {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+    }
+});
+  fetch();
 
 })
 
@@ -122,12 +160,12 @@ var form = new FormData();
             200: function(response) {
                 console.log(response);
                 console.log("Request was successful");
-               
-               
+                $('#top-modal').modal('hide');
+               fetch();
              
                 Swal.fire(
                     'Success!',
-                    'Ingredients Created Successfully',
+                    'Ingredient Created Successfully',
                     'success'
                 )
             },
@@ -140,7 +178,7 @@ var form = new FormData();
             console.log(xhr)
             Swal.fire(
                 'Server Error!',
-                'Ingredients Not Created',
+                'Ingredient Not Created',
                 'error'
             )
         }
@@ -148,8 +186,8 @@ var form = new FormData();
 }
 else{
     var form = new FormData();
-    form.append("ingredient", document.getElementById("ingredient").value);
-    form.append("unit_id", document.getElementById("unit").value);
+    form.append("name", document.getElementById("ingredient").value);
+    form.append("unit", document.getElementById("unit").value);
 
 
 
@@ -168,10 +206,11 @@ else{
         success: function (data) {
             console.log(data);
             console.log("Request was successful");
-
+            $('#top-modal').modal('hide');
+            fetch();
             Swal.fire(
                 'Success!',
-                'Ingredients Updated Successfully',
+                'Ingredient Updated Successfully',
                 'success'
             );
         },
@@ -179,7 +218,7 @@ else{
             console.log(xhr);
             Swal.fire(
                 'Server Error!',
-                'Ingredients Not Updated',
+                'Ingredient Not Updated',
                 'error'
             );
         }
@@ -189,6 +228,7 @@ else{
 }
 
 function edit(id){
+    clearModalFields()
 $('#top-modal').modal('show');
 $('#hidden').val(id);
 
@@ -222,8 +262,7 @@ selectField.append($('<option>', {
 
                     });
 
-
-   
+var table = new DataTable('#basic-datatable');
 $.ajax(settings).done(function(response) {
     console.log(response);
     table.clear().draw();
@@ -234,7 +273,7 @@ $.ajax(settings).done(function(response) {
             data.unit,
             data.created_at,
             data.updated_at,
-            '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="editData(' +
+            '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="edit(' +
             data.id +
             ')"  class="btn btn-soft-secondary "style="padding:5px 10px;" ><i class="ri ri-pencil-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
             ]).draw(false);
@@ -243,5 +282,27 @@ $.ajax(settings).done(function(response) {
 }
 
 
+function clearModalFields() {
+    // Select all input, textarea, and select elements within the modal
+    $('#top-modal :input').each(function() {
+        var elementType = this.type;
+        var elementId = this.id;
+        $('.select2').val(null).trigger('change');
 
+        // Handle different input types appropriately
+        switch (elementType) {
+            case 'text':
+            case 'number':
+            case 'file':
+            case 'hidden':
+            case 'textarea':
+            case 'select':
+            case 'select-2':
+                $('#' + elementId).val('');
+                break;
+
+            // Add more cases as needed for other input types
+        }
+    });
+}
 </script>
