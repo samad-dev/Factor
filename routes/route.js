@@ -1,6 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
-var cors = require('cors')
+
 const route = express.Router();
 const db = mysql.createConnection({
     host: 'localhost',
@@ -9,7 +9,7 @@ const db = mysql.createConnection({
     database: 'factor75',
 });
 
-app.use(cors());
+
 
 db.connect((err) => {
     if (err) {
