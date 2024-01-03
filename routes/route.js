@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
+var cors = require('cors')
 const route = express.Router();
 const db = mysql.createConnection({
     host: 'localhost',
@@ -8,6 +9,8 @@ const db = mysql.createConnection({
     database: 'factor75',
 });
 
+app.use(cors());
+
 db.connect((err) => {
     if (err) {
         console.error('Error connecting to MySQL:', err);
@@ -15,6 +18,7 @@ db.connect((err) => {
     }
     console.log('Connected to MySQL database');
 });
+
 
 //////////////////////////// PLAN API //////////////////////////////////////
 route.get('/plan', (req, res) => {
@@ -458,6 +462,227 @@ route.delete('/dish_ingr/:id', (req, res) => {
     db.query('DELETE FROM dish_ingredients WHERE id = ?', [id], (err) => {
         if (err) throw err;
         res.json({ message: 'Dish deleted successfully' });
+    });
+});
+
+////DISH INGRE API END///////////////////////////////////
+route.get('/user', (req, res) => {
+    db.query('Select * from users', (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+route.get('/user/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM users WHERE id = ?', [id], (err, results) => {
+        if (err) throw err;
+        res.json(results[0]);
+    });
+});
+// Create a new user
+route.post('/user', (req, res) => {
+    const { username, email,password,usertype } = req.body;
+    db.query('INSERT INTO `users`(`username`,`email`,`password`,`user_type`) VALUES (?,?,?,?)', [username, email,password,usertype], (err, result) => {
+        if (err) 
+        {
+             res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'User added successfully', id: result.insertId });
+
+        }
+
+    });
+});
+route.put('/user/:id', (req, res) => {
+    const { id } = req.params;
+    const {  username, email,password,usertype } = req.body;  
+    console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
+    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'User updated successfully' });
+        }
+    });
+});
+route.delete('/user/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM users WHERE id = ?', [id], (err) => {
+        if (err) throw err;
+        res.json({ message: 'User deleted successfully' });
+    });
+});
+///////////////////////User API Ends////////////////////////
+route.get('/user', (req, res) => {
+    db.query('Select * from users', (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+route.get('/user/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM users WHERE id = ?', [id], (err, results) => {
+        if (err) throw err;
+        res.json(results[0]);
+    });
+});
+// Create a new user
+route.post('/user', (req, res) => {
+    const { username, email,password,usertype } = req.body;
+    db.query('INSERT INTO `users`(`username`,`email`,`password`,`user_type`) VALUES (?,?,?,?)', [username, email,password,usertype], (err, result) => {
+        if (err) 
+        {
+             res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'User added successfully', id: result.insertId });
+
+        }
+
+    });
+});
+route.put('/user/:id', (req, res) => {
+    const { id } = req.params;
+    const {  username, email,password,usertype } = req.body;  
+    console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
+    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'User updated successfully' });
+        }
+    });
+});
+route.delete('/user/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM users WHERE id = ?', [id], (err) => {
+        if (err) throw err;
+        res.json({ message: 'User deleted successfully' });
+    });
+});
+///////////////////USER API ENDS///////////////////////////////////////////
+
+route.get('/customer', (req, res) => {
+    db.query('Select * from customers', (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+route.get('/customer/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM customers WHERE id = ?', [id], (err, results) => {
+        if (err) throw err;
+        res.json(results[0]);
+    });
+});
+// Create a new user
+route.post('/customer', (req, res) => {
+    const { user_id,first_name,last_name,address,address2,city,state,zipcode,phone_number,payment_method,card_verified} = req.body;
+    db.query('INSERT INTO `customers`(`user_id`,`first_name`,`last_name`,`address`,`address2`,`city`,`state`,`zipcode`,`phone_number`,`payment_method`,`card_verified`) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [user_id,first_name,last_name,address,address2,city,state,zipcode,phone_number,payment_method,card_verified], (err, result) => {
+        if (err) 
+        {
+             res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'Customer added successfully', id: result.insertId });
+
+        }
+
+    });
+});
+route.put('/customer/:id', (req, res) => {
+    const { id } = req.params;
+    const {  username, email,password,usertype } = req.body;  
+    // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
+    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'Customer updated successfully' });
+        }
+    });
+});
+route.delete('/customer/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM customers WHERE id = ?', [id], (err) => {
+        if (err) throw err;
+        res.json({ message: 'Customer deleted successfully' });
+    });
+});
+
+
+route.get('/orders', (req, res) => {
+    db.query('SELECT p.plan_name,p.no_meals,p.shipping_fee,p.price,o.*,c.`user_id`,c.`first_name`,c.`last_name`,c.`address`,c.`address2`,c.`city`,c.`state`,c.`zipcode`,c.`phone_number`,c.`payment_method`,c.`card_verified` FROM factor75.orders o inner join plans p on p.id = o.plan_id inner join customers c on c.id = o.customer_id;', (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+route.get('/orders/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM orders WHERE id = ?', [id], (err, results) => {
+        if (err) throw err;
+        res.json(results[0]);
+    });
+});
+// Create a new user
+route.post('/orders', (req, res) => {
+    const {customer_id,order_from,order_to,plan_id,status,order_dish,dish_dates} = req.body;
+    console.log(dish_dates);
+    var dishes = JSON.parse(order_dish);
+    console.log(dishes.length);
+    var dates = JSON.parse(dish_dates);
+    console.log(dates);
+    db.query('INSERT INTO `orders`(`customer_id`,`order_from`,`order_to`,`plan_id`,`status`) VALUES (?,?,?,?,?)', [customer_id,order_from,order_to,plan_id,status], (err, result) => {
+        if (err) 
+        {
+             res.json({ message: err, status: 500 })
+        }
+        else {
+
+            for (var i = 0; i < dishes.length; i++) 
+            {
+                console.log(dates[i]);
+                db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`order_datetime`) VALUES (?,?,?)', [result.insertId, dishes[i],dates[i]], (err2, result2) => {
+                    if (err2) {
+                        res.json({ message: err, status: 500 })
+                    }
+
+
+                });
+
+            }
+            res.json({ message: 'Order Created successfully', id: result.insertId });
+
+        }
+
+    });
+});
+route.put('/orders/:id', (req, res) => {
+    const { id } = req.params;
+    const {  customer_id,order_from,order_to,plan_id,status} = req.body;  
+    // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
+    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'Customer updated successfully' });
+        }
+    });
+});
+route.delete('/customer/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM orders WHERE id = ?', [id], (err) => {
+        if (err) throw err;
+        res.json({ message: 'Order deleted successfully' });
     });
 });
 
