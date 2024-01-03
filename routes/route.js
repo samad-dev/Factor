@@ -334,11 +334,80 @@ route.get('/dish', (req, res) => {
 
 route.get('/dish/:id', (req, res) => {
     const { id } = req.params;
-    db.query('SELECT * FROM dish WHERE id = ?', [id], (err, results) => {
-        if (err) throw err;
-        res.json(results[0]);
+    db.query('SELECT * FROM dish WHERE id = ?', [id], async (err, results) => {
+        if (err) {
+            res.json({ message: err, status: 500 });
+        } else {
+            for (let a = 0; a < results.length; a++) {
+                const data = JSON.parse(JSON.stringify(results[a]));
+    
+                try {
+                    const results2 = await queryIngredients(data.id);
+                    const results3 = await queryNutrients(data.id);
+                    const results4 = await queryprefs(data.id);
+                    
+                    data.ingre = results2;
+                    data.nutrient = results3;
+                    data.prefs = results4;
+                    results[a] = data; 
+                } catch (error) {
+                    res.json({ message: error, status: 500 });
+                    return;
+                }
+            }
+    
+            res.json(results);
+        }
     });
+    
+    // Function to query ingredients asynchronously
+    function queryIngredients(dishId) {
+        return new Promise((resolve, reject) => {
+            db.query(
+                'SELECT i.ingredient, u.unit,di.ingredient_qty FROM factor75.ingredients i ' +
+                    'JOIN dish_ingredients di ON di.ingredient_id = i.id ' +
+                    'JOIN units u ON u.id = i.unit_id ' +
+                    'WHERE di.dish_id = ' + dishId,
+                (err, results) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(results);
+                    }
+                }
+            );
+        });
+    }
+    function queryNutrients(dishId) {
+        return new Promise((resolve, reject) => {
+            db.query(
+                'SELECT n.id,n.nutrient, di.nutrient_qty FROM factor75.nutrients n JOIN dish_nutrients di ON di.dish_nutrients = n.id WHERE di.dish_id = ' + dishId,
+                (err, results) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(results);
+                    }
+                }
+            );
+        });
+    }
+    function queryprefs(dishId) {
+        return new Promise((resolve, reject) => {
+            db.query(
+                'SELECT p.preference,p.id FROM factor75.dish_prefernces dp join prefernces p on p.id =dp.preference_id where dish_id = ' + dishId,
+                (err, results) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(results);
+                    }
+                }
+            );
+        });
+    }
 });
+
 // Create a new user
 route.post('/dish', (req, res) => {
     const { image } = req.files;
@@ -693,6 +762,24 @@ route.delete('/customer/:id', (req, res) => {
         res.json({ message: 'Order deleted successfully' });
     });
 });
+
+
+///Update Individual Order Status
+route.put('/dish_orders/:id', (req, res) => {
+    const { id } = req.params;
+    const { status} = req.body;  
+    // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
+    db.query('UPDATE `factor75`.`order_dishes` SET `order_status` = "'+status+'" WHERE id = '+id+'', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'Order Status Updated successfully' });
+        }
+    });
+});
+
 
 
 route.get('/', (req, res, next) => {
