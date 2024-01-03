@@ -355,7 +355,7 @@ route.post('/dish', (req, res) => {
     var qtys = JSON.parse(qty);
     var nqtys = JSON.parse(nqty);
     var pref = JSON.parse(prefs);
-    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`) VALUES (?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label], (err, result) => {
+    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`,`image`) VALUES (?,?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label,'/upload/' + image.name], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
         }
