@@ -341,6 +341,14 @@ route.get('/dish/:id', (req, res) => {
 });
 // Create a new user
 route.post('/dish', (req, res) => {
+    const { image } = req.files;
+
+    // If no image submitted, exit
+    if (!image){
+        res.sendStatus(400);
+    }
+    // Move the uploaded image to our upload folder
+    image.mv(__dirname + '/upload/' + image.name);
     const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs } = req.body;
     var ingredient_ids = JSON.parse(ingredient_id);
     var nut_ids = JSON.parse(nut_id);
@@ -388,7 +396,7 @@ route.post('/dish', (req, res) => {
         }
 
     });
-});
+    });
 route.put('/dish/:id', (req, res) => {
     const { id } = req.params;
     const { dish_name, total_calories, description, instructions, allergens, add_on, label } = req.body;
