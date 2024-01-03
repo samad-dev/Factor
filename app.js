@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+var cors = require('cors');
 const route = require('./routes/route');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
@@ -9,7 +10,7 @@ const upload = require('express-fileupload');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: "./config.env" });
-
+app.use(cors());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(upload());
