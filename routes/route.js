@@ -419,14 +419,14 @@ route.post('/dish', (req, res) => {
         res.sendStatus(400);
     }
     // Move the uploaded image to our upload folder
-    image.mv(__dirname + '/uploads/' + image.name);
+    image.mv(__dirname + '/upload/' + image.name);
     const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs } = req.body;
     var ingredient_ids = JSON.parse(ingredient_id);
     var nut_ids = JSON.parse(nut_id);
     var qtys = JSON.parse(qty);
     var nqtys = JSON.parse(nqty);
     var pref = JSON.parse(prefs);
-    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`,`image`) VALUES (?,?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label, '/upload/' + image.name], (err, result) => {
+    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`,`image`) VALUES (?,?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label, '/uploads/' + image.name], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
         }
