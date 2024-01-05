@@ -410,6 +410,9 @@ route.get('/dish/:id', (req, res) => {
     }
 });
 
+
+
+
 // Create a new user
 route.post('/dish', (req, res) => {
     const { image } = req.files;
@@ -421,22 +424,25 @@ route.post('/dish', (req, res) => {
     // Move the uploaded image to our upload folder
     image.mv(__dirname + '/upload/' + image.name);
     const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs } = req.body;
-    var ingredient_ids = JSON.parse(ingredient_id);
-    var nut_ids = JSON.parse(nut_id);
-    var qtys = JSON.parse(qty);
-    var nqtys = JSON.parse(nqty);
-    var pref = JSON.parse(prefs);
+    console.log(ingredient_id);
+    var ingredient_ids = ingredient_id.split(',');
+    console.log(ingredient_ids.length);
+    var nut_ids = nut_id.split(',');
+    var qtys = qty.split(',');
+    var nqtys = nqty.split(',');
+    var pref = prefs.split(',');
     db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`,`image`) VALUES (?,?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label, '/uploads/' + image.name], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
         }
         else {
             for (var i = 0; i < ingredient_ids.length; i++) {
+                // console.log(ingredient_ids[i]);
+                // console.log('INSERT INTO dish_ingredients (`dish_id`,`ingredient_id`,`ingredient_qty`) VALUES ('+result.insertId+','+ ingredient_ids[i]+','+ qtys[i]+')')
                 db.query('INSERT INTO dish_ingredients (`dish_id`,`ingredient_id`,`ingredient_qty`) VALUES (?,?,?)', [result.insertId, ingredient_ids[i], qtys[i]], (err2, result2) => {
                     if (err2) {
                         res.json({ message: err, status: 500 })
                     }
-
 
                 });
 
@@ -465,6 +471,7 @@ route.post('/dish', (req, res) => {
             res.json({ message: 'Dish added successfully', id: result.insertId });
 
         }
+       
 
     });
 });
@@ -541,6 +548,15 @@ route.delete('/dish_ingr/:id', (req, res) => {
     db.query('DELETE FROM dish_ingredients WHERE id = ?', [id], (err) => {
         if (err) throw err;
         res.json({ message: 'Dish deleted successfully' });
+    });
+});
+
+
+route.get('/order_dishes/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM factor75.order_dishes od join dish d on d.id = od.dish_id where order_id = ' + id + ' ', (err, results) => {
+        if (err) throw err;
+        res.json(results);
     });
 });
 
