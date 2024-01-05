@@ -28,6 +28,8 @@ route.get('/plan', (req, res) => {
     });
 });
 
+
+
 route.get('/plan/:id', (req, res) => {
     const { id } = req.params;
     db.query('SELECT * FROM plans WHERE id = ?', [id], (err, results) => {
@@ -264,34 +266,34 @@ route.get('/dish', (req, res) => {
         } else {
             for (let a = 0; a < results.length; a++) {
                 const data = JSON.parse(JSON.stringify(results[a]));
-    
+
                 try {
                     const results2 = await queryIngredients(data.id);
                     const results3 = await queryNutrients(data.id);
                     const results4 = await queryprefs(data.id);
-                    
+
                     data.ingre = results2;
                     data.nutrient = results3;
                     data.prefs = results4;
-                    results[a] = data; 
+                    results[a] = data;
                 } catch (error) {
                     res.json({ message: error, status: 500 });
                     return;
                 }
             }
-    
+
             res.json(results);
         }
     });
-    
+
     // Function to query ingredients asynchronously
     function queryIngredients(dishId) {
         return new Promise((resolve, reject) => {
             db.query(
                 'SELECT i.ingredient, u.unit,di.ingredient_qty FROM factor75.ingredients i ' +
-                    'JOIN dish_ingredients di ON di.ingredient_id = i.id ' +
-                    'JOIN units u ON u.id = i.unit_id ' +
-                    'WHERE di.dish_id = ' + dishId,
+                'JOIN dish_ingredients di ON di.ingredient_id = i.id ' +
+                'JOIN units u ON u.id = i.unit_id ' +
+                'WHERE di.dish_id = ' + dishId,
                 (err, results) => {
                     if (err) {
                         reject(err);
@@ -340,34 +342,34 @@ route.get('/dish/:id', (req, res) => {
         } else {
             for (let a = 0; a < results.length; a++) {
                 const data = JSON.parse(JSON.stringify(results[a]));
-    
+
                 try {
                     const results2 = await queryIngredients(data.id);
                     const results3 = await queryNutrients(data.id);
                     const results4 = await queryprefs(data.id);
-                    
+
                     data.ingre = results2;
                     data.nutrient = results3;
                     data.prefs = results4;
-                    results[a] = data; 
+                    results[a] = data;
                 } catch (error) {
                     res.json({ message: error, status: 500 });
                     return;
                 }
             }
-    
+
             res.json(results);
         }
     });
-    
+
     // Function to query ingredients asynchronously
     function queryIngredients(dishId) {
         return new Promise((resolve, reject) => {
             db.query(
                 'SELECT i.ingredient, u.unit,di.ingredient_qty FROM factor75.ingredients i ' +
-                    'JOIN dish_ingredients di ON di.ingredient_id = i.id ' +
-                    'JOIN units u ON u.id = i.unit_id ' +
-                    'WHERE di.dish_id = ' + dishId,
+                'JOIN dish_ingredients di ON di.ingredient_id = i.id ' +
+                'JOIN units u ON u.id = i.unit_id ' +
+                'WHERE di.dish_id = ' + dishId,
                 (err, results) => {
                     if (err) {
                         reject(err);
@@ -413,7 +415,7 @@ route.post('/dish', (req, res) => {
     const { image } = req.files;
 
     // If no image submitted, exit
-    if (!image){
+    if (!image) {
         res.sendStatus(400);
     }
     // Move the uploaded image to our upload folder
@@ -424,7 +426,7 @@ route.post('/dish', (req, res) => {
     var qtys = JSON.parse(qty);
     var nqtys = JSON.parse(nqty);
     var pref = JSON.parse(prefs);
-    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`,`image`) VALUES (?,?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label,'/upload/' + image.name], (err, result) => {
+    db.query('INSERT INTO dish (`dish_name`,`total_calories`,`description`,`instructions`,`allergens`,`add_on`,`label`,`image`) VALUES (?,?,?,?,?,?,?,?)', [dish_name, total_calories, description, instructions, allergens, add_on, label, '/upload/' + image.name], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
         }
@@ -465,7 +467,7 @@ route.post('/dish', (req, res) => {
         }
 
     });
-    });
+});
 route.put('/dish/:id', (req, res) => {
     const { id } = req.params;
     const { dish_name, total_calories, description, instructions, allergens, add_on, label } = req.body;
@@ -558,11 +560,10 @@ route.get('/user/:id', (req, res) => {
 });
 // Create a new user
 route.post('/user', (req, res) => {
-    const { username, email,password,usertype } = req.body;
-    db.query('INSERT INTO `users`(`username`,`email`,`password`,`user_type`) VALUES (?,?,?,?)', [username, email,password,usertype], (err, result) => {
-        if (err) 
-        {
-             res.json({ message: err, status: 500 })
+    const { username, email, password, usertype } = req.body;
+    db.query('INSERT INTO `users`(`username`,`email`,`password`,`user_type`) VALUES (?,?,?,?)', [username, email, password, usertype], (err, result) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
         }
         else {
             res.json({ message: 'User added successfully', id: result.insertId });
@@ -573,9 +574,9 @@ route.post('/user', (req, res) => {
 });
 route.put('/user/:id', (req, res) => {
     const { id } = req.params;
-    const {  username, email,password,usertype } = req.body;  
-    console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
-    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+    const { username, email, password, usertype } = req.body;
+    console.log("UPDATE `users` SET `username` = '" + username + "' and email = '" + email + "' and password = '" + password + "' and user_type = '" + usertype + "' WHERE `id` = " + id + ";");
+    db.query('UPDATE `factor75`.`users` SET `username` = "' + username + '",`email` = "' + email + '",`password` = "' + password + '", `user_type` = "' + usertype + '" WHERE `id` = ' + id + ';', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -608,11 +609,10 @@ route.get('/user/:id', (req, res) => {
 });
 // Create a new user
 route.post('/user', (req, res) => {
-    const { username, email,password,usertype } = req.body;
-    db.query('INSERT INTO `users`(`username`,`email`,`password`,`user_type`) VALUES (?,?,?,?)', [username, email,password,usertype], (err, result) => {
-        if (err) 
-        {
-             res.json({ message: err, status: 500 })
+    const { username, email, password, usertype } = req.body;
+    db.query('INSERT INTO `users`(`username`,`email`,`password`,`user_type`) VALUES (?,?,?,?)', [username, email, password, usertype], (err, result) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
         }
         else {
             res.json({ message: 'User added successfully', id: result.insertId });
@@ -623,9 +623,9 @@ route.post('/user', (req, res) => {
 });
 route.put('/user/:id', (req, res) => {
     const { id } = req.params;
-    const {  username, email,password,usertype } = req.body;  
-    console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
-    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+    const { username, email, password, usertype } = req.body;
+    console.log("UPDATE `users` SET `username` = '" + username + "' and email = '" + email + "' and password = '" + password + "' and user_type = '" + usertype + "' WHERE `id` = " + id + ";");
+    db.query('UPDATE `factor75`.`users` SET `username` = "' + username + '",`email` = "' + email + '",`password` = "' + password + '", `user_type` = "' + usertype + '" WHERE `id` = ' + id + ';', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -659,11 +659,10 @@ route.get('/customer/:id', (req, res) => {
 });
 // Create a new user
 route.post('/customer', (req, res) => {
-    const { user_id,first_name,last_name,address,address2,city,state,zipcode,phone_number,payment_method,card_verified} = req.body;
-    db.query('INSERT INTO `customers`(`user_id`,`first_name`,`last_name`,`address`,`address2`,`city`,`state`,`zipcode`,`phone_number`,`payment_method`,`card_verified`) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [user_id,first_name,last_name,address,address2,city,state,zipcode,phone_number,payment_method,card_verified], (err, result) => {
-        if (err) 
-        {
-             res.json({ message: err, status: 500 })
+    const { user_id, first_name, last_name, address, address2, city, state, zipcode, phone_number, payment_method, card_verified } = req.body;
+    db.query('INSERT INTO `customers`(`user_id`,`first_name`,`last_name`,`address`,`address2`,`city`,`state`,`zipcode`,`phone_number`,`payment_method`,`card_verified`) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [user_id, first_name, last_name, address, address2, city, state, zipcode, phone_number, payment_method, card_verified], (err, result) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
         }
         else {
             res.json({ message: 'Customer added successfully', id: result.insertId });
@@ -674,9 +673,9 @@ route.post('/customer', (req, res) => {
 });
 route.put('/customer/:id', (req, res) => {
     const { id } = req.params;
-    const {  username, email,password,usertype } = req.body;  
+    const { username, email, password, usertype } = req.body;
     // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
-    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+    db.query('UPDATE `factor75`.`users` SET `username` = "' + username + '",`email` = "' + email + '",`password` = "' + password + '", `user_type` = "' + usertype + '" WHERE `id` = ' + id + ';', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -710,23 +709,21 @@ route.get('/orders/:id', (req, res) => {
 });
 // Create a new user
 route.post('/orders', (req, res) => {
-    const {customer_id,order_from,order_to,plan_id,status,order_dish,dish_dates} = req.body;
+    const { customer_id, order_from, order_to, plan_id, status, order_dish, dish_dates } = req.body;
     console.log(dish_dates);
     var dishes = JSON.parse(order_dish);
     console.log(dishes.length);
     var dates = JSON.parse(dish_dates);
     console.log(dates);
-    db.query('INSERT INTO `orders`(`customer_id`,`order_from`,`order_to`,`plan_id`,`status`) VALUES (?,?,?,?,?)', [customer_id,order_from,order_to,plan_id,status], (err, result) => {
-        if (err) 
-        {
-             res.json({ message: err, status: 500 })
+    db.query('INSERT INTO `orders`(`customer_id`,`order_from`,`order_to`,`plan_id`,`status`) VALUES (?,?,?,?,?)', [customer_id, order_from, order_to, plan_id, status], (err, result) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
         }
         else {
 
-            for (var i = 0; i < dishes.length; i++) 
-            {
+            for (var i = 0; i < dishes.length; i++) {
                 console.log(dates[i]);
-                db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`order_datetime`) VALUES (?,?,?)', [result.insertId, dishes[i],dates[i]], (err2, result2) => {
+                db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`order_datetime`) VALUES (?,?,?)', [result.insertId, dishes[i], dates[i]], (err2, result2) => {
                     if (err2) {
                         res.json({ message: err, status: 500 })
                     }
@@ -743,9 +740,9 @@ route.post('/orders', (req, res) => {
 });
 route.put('/orders/:id', (req, res) => {
     const { id } = req.params;
-    const {  customer_id,order_from,order_to,plan_id,status} = req.body;  
+    const { customer_id, order_from, order_to, plan_id, status } = req.body;
     // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
-    db.query('UPDATE `factor75`.`users` SET `username` = "'+username+'",`email` = "'+email+'",`password` = "'+password+'", `user_type` = "'+usertype+'" WHERE `id` = '+id+';', (err) => {
+    db.query('UPDATE `factor75`.`users` SET `username` = "' + username + '",`email` = "' + email + '",`password` = "' + password + '", `user_type` = "' + usertype + '" WHERE `id` = ' + id + ';', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -767,9 +764,25 @@ route.delete('/customer/:id', (req, res) => {
 ///Update Individual Order Status
 route.put('/dish_orders/:id', (req, res) => {
     const { id } = req.params;
-    const { status} = req.body;  
+    const { status } = req.body;
     // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
-    db.query('UPDATE `factor75`.`order_dishes` SET `order_status` = "'+status+'" WHERE id = '+id+'', (err) => {
+    db.query('UPDATE `factor75`.`order_dishes` SET `order_status` = "' + status + '" WHERE id = ' + id + '', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'Order Status Updated successfully' });
+        }
+    });
+});
+
+///////UPdate Main Order Status//////////////
+route.put('/dish_orders/:id', (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
+    db.query('UPDATE `factor75`.`order_dishes` SET `order_status` = "' + status + '" WHERE id = ' + id + '', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -783,25 +796,25 @@ route.put('/dish_orders/:id', (req, res) => {
 
 
 route.get('/', (req, res, next) => {
-    res.render('index', { title: 'Dashboard'});
+    res.render('index', { title: 'Dashboard' });
 })
 route.get('/units', (req, res, next) => {
-    res.render('admin/unit', { title: 'Dashboard'});
+    res.render('admin/unit', { title: 'Dashboard' });
 })
 route.get('/ingredients', (req, res, next) => {
-    res.render('admin/ingredients', { title: 'Dashboard'});
+    res.render('admin/ingredients', { title: 'Dashboard' });
 })
 route.get('/nutrients', (req, res, next) => {
-    res.render('admin/nutrients', { title: 'Dashboard'});
+    res.render('admin/nutrients', { title: 'Dashboard' });
 })
 route.get('/preference', (req, res, next) => {
-    res.render('admin/preference', { title: 'Dashboard'});
+    res.render('admin/preference', { title: 'Dashboard' });
 })
 route.get('/sub_plan', (req, res, next) => {
-    res.render('admin/plan', { title: 'Dashboard'});
+    res.render('admin/plan', { title: 'Dashboard' });
 })
 route.get('/dishes', (req, res, next) => {
-    res.render('admin/dish', { title: 'Dashboard'});
+    res.render('admin/dish', { title: 'Dashboard' });
 })
 route.get('/auth-login', (req, res, next) => {
     res.render('auth/auth-login', { title: 'Login In', layout: false })

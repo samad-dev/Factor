@@ -14,7 +14,7 @@ app.use(cors());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(upload());
-
+app.use('/uploads', express.static(path.join(__dirname, 'routes/upload')));
 app.use(express.json());
 app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
 app.use(cookieParser());
