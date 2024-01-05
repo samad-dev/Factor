@@ -419,7 +419,7 @@ route.post('/dish', (req, res) => {
         res.sendStatus(400);
     }
     // Move the uploaded image to our upload folder
-    image.mv(__dirname + '/upload/' + image.name);
+    image.mv(__dirname + '/uploads/' + image.name);
     const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs } = req.body;
     var ingredient_ids = JSON.parse(ingredient_id);
     var nut_ids = JSON.parse(nut_id);
