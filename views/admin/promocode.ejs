@@ -22,7 +22,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h1 class="header-title" class="mb-6" style="font-size: 20px;">Nutrients</h1>
+                <h1 class="header-title" class="mb-6" style="font-size: 20px;">Promo Code</h1>
                 <br>
                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#top-modal" onclick="clearModalFields()">Add</button>
                 <br>
@@ -33,12 +33,12 @@
                     <thead>
                         <tr>
                             <th>S NO#</th>
-                            <th>Nutrients</th>
-                            <th>Nutrients Unit</th>
+                            <th>Promo Code</th>
+                            <th>Discount</th>
+                            <th>No Of Users</th>
                             <th>Created At</th>
                             <th>Updated At</th>
                             <th>Edit</th>
-                            <th>Delete</th>
                            
                         </tr>
                     </thead>         
@@ -64,13 +64,16 @@
             </div>
             <div class="modal-body">
                 <br>
-               <label for="" style="font-size: 16px;" >Nutrients</label>
-               <input type="text" class="form-control" id="nutrient">
+               <label for="" style="font-size: 16px;" >Promo Code</label>
+               <input type="text" class="form-control" id="promocode">
                <br>
-               <label for="" style="font-size: 16px;"   >Nutrients Unit</label>
-               <input type="text" class="form-control" id="nutrient_unit">
+               <label for="" style="font-size: 16px;" >Discount</label>
+               <input type="text" class="form-control" id="discount">
+               <br>
+               <label for="" style="font-size: 16px;" >No Of Users</label>
+               <input type="number" class="form-control" id="no_user">
                <input type="hidden" id="hidden"></input>
-               <br>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
@@ -99,6 +102,7 @@
 <script src="assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
 
 <script>
+    
 
 
 
@@ -128,12 +132,14 @@ function submit(){
 var update_id = $('#hidden').val();
 if(update_id == ""){
 var form = new FormData();
-    form.append("nutrient", document.getElementById("nutrient").value);
-    form.append("nutrient_unit", document.getElementById("nutrient_unit").value);
+    form.append("username", document.getElementById("username").value);
+    form.append("email", document.getElementById("email").value);
+    form.append("password", document.getElementById("password").value);
+    form.append("usertype", "admin");
    
 
     var settings = {
-        "url": "/nutrient",
+        "url": "/user",
         "method": "POST",
         "timeout": 0,
         "processData": false,
@@ -153,7 +159,7 @@ var form = new FormData();
                 fetch()
                 Swal.fire(
                     'Success!',
-                    'Nutrient Created Successfully',
+                    'User Created Successfully',
                     'success'
                 )
             },
@@ -166,7 +172,7 @@ var form = new FormData();
             console.log(xhr)
             Swal.fire(
                 'Server Error!',
-                'Nutrient Not Created',
+                'User Not Created',
                 'error'
             )
         }
@@ -174,13 +180,15 @@ var form = new FormData();
 }
 else{
     var form = new FormData();
-    form.append("nutrient", document.getElementById("nutrient").value);
-    form.append("nutrient_unit", document.getElementById("nutrient_unit").value);
+    form.append("username", document.getElementById("username").value);
+    form.append("email", document.getElementById("email").value);
+    form.append("password", document.getElementById("password").value);
+    form.append("usertype", "admin");
    
 
 
     var settings = {
-        "url": "/nutrient/" + update_id, // Fixed the URL concatenation
+        "url": "/user/" + update_id, // Fixed the URL concatenation
         "method": "PUT",
         "timeout": 0,
         "processData": false,
@@ -200,7 +208,7 @@ else{
 
             Swal.fire(
                 'Success!',
-                'Nutrient Updated Successfully',
+                'User Updated Successfully',
                 'success'
             );
         },
@@ -208,7 +216,7 @@ else{
             console.log(xhr);
             Swal.fire(
                 'Server Error!',
-                'Nutrient Not Updated',
+                'User Not Updated',
                 'error'
             );
         }
@@ -220,14 +228,14 @@ else{
 function edit(id){
     clearModalFields();
     var settings = {
-    "url": "/nutrient/"+id,
+    "url": "/user/"+id,
     "method": "GET",
     "timeout": 0,
 };
-$.ajax(settings).done(function(response) {
-    
-    $('#nutrient').val(response['nutrient']);
-    $('#nutrient_unit').val(response['nutrient_unit']);
+$.ajax(settings).done(function(response) {  
+    $('#username').val(response['username']);
+    $('#email').val(response['email']);
+    $('#password').val(response['password']);
 
 })
 
@@ -237,7 +245,7 @@ $.ajax(settings).done(function(response) {
 }
 function fetch(){
 var settings = {
-    "url": "/nutrient",
+    "url": "/user",
     "method": "GET",
     "timeout": 0,
 };
@@ -249,17 +257,15 @@ $.ajax(settings).done(function(response) {
     $.each(response, function(index, data) {
         table.row.add([
             index + 1,
-            data.nutrient,
-            data.nutrient_unit,
+            data.username,
+            data.email,
+            data.password,
+            data.user_type,
             data.created_at,
             data.updated_at,
             '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="edit(' +
             data.id +
             ')"  class="btn btn-soft-secondary "style="padding:5px 10px;" ><i class="ri ri-pencil-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
-            '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="delete_(' +
-            data.id +
-            ')"  class="btn btn-soft-danger "style="padding:5px 10px;" ><i class="ri  ri-delete-bin-2-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
-           
             ]).draw(false);
     });
 });
@@ -277,6 +283,7 @@ function clearModalFields() {
             case 'file':
             case 'hidden':
             case 'textarea':
+            case 'password':
             case 'select':
                 $('#' + elementId).val('');
                 break;
@@ -285,7 +292,6 @@ function clearModalFields() {
         }
     });
 }
-
 
 function delete_(id){
 
@@ -301,7 +307,7 @@ confirmButtonText: 'Yes, delete it!'
 if (result.isConfirmed) {
   // Perform the delete action here
   var settings = {
-"url": "/nutrient/"+id,
+"url": "/user/"+id,
 "method": "DELETE",
 "timeout": 0,
 };
@@ -314,7 +320,7 @@ $.ajax({
             $('#top-modal').modal('hide');
            
             fetch()
-            Swal.fire('Deleted!', 'User Deleted Successfully!', 'success');
+            Swal.fire('Deleted!', 'Promo Code Deleted Successfully!', 'success');
         },
     },
     success: function(data) {
@@ -325,7 +331,7 @@ $.ajax({
         console.log(xhr)
         Swal.fire(
             'Server Error!',
-            'User Not Deleted',
+            'Promo Code Not Deleted',
             'error'
         )
     }

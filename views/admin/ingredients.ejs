@@ -33,7 +33,7 @@
                 <br>
 
                 <table id="basic-datatable"
-                    class="table table-striped dt-responsive nowrap w-100">
+                    class="table table-striped nowrap row-border order-column w-100">
                     <thead>
                         <tr>
                             <th>S NO#</th>
@@ -42,6 +42,7 @@
                             <th>Created At</th>
                             <th>Updated At</th>
                             <th>Edit</th>
+                            <th>Delete</th>
 
                         </tr>
                     </thead>
@@ -135,8 +136,8 @@ $("#basic-datatable").DataTable({
 function submit(){
 
 var update_id = $('#hidden').val();
-alert(document.getElementById("ingredient").value);
-alert(document.getElementById("unit").value)
+// alert(document.getElementById("ingredient").value);
+// alert(document.getElementById("unit").value)
 
 if(update_id == ""){
 var form = new FormData();
@@ -228,9 +229,21 @@ else{
 }
 
 function edit(id){
+    var settings = {
+    "url": "/ingredient/"+id,
+    "method": "GET",
+    "timeout": 0,
+};
+$.ajax(settings).done(function(response) {  
+    $('#ingredient').val(response['ingredient']);
+    $('#unit').val(response['unit_id']).trigger('change');
+  
+
+})
     clearModalFields()
 $('#top-modal').modal('show');
 $('#hidden').val(id);
+
 
 }
 
@@ -249,6 +262,7 @@ selectField.append($('<option>', {
     
     $.ajax({            
          url: "/unit",
+         scrollX:!0,scrollCollapse:!0,paging:!1,fixedColumns:!0,
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -276,6 +290,10 @@ $.ajax(settings).done(function(response) {
             '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="edit(' +
             data.id +
             ')"  class="btn btn-soft-secondary "style="padding:5px 10px;" ><i class="ri ri-pencil-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
+            '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="delete_(' +
+            data.id +
+            ')"  class="btn btn-soft-danger "style="padding:5px 10px;" ><i class="ri  ri-delete-bin-2-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
+           
             ]).draw(false);
     });
 });
@@ -304,5 +322,54 @@ function clearModalFields() {
             // Add more cases as needed for other input types
         }
     });
+}
+function delete_(id){
+
+Swal.fire({
+title: 'Are you sure?',
+text: 'You won\'t be able to revert this!',
+icon: 'warning',
+showCancelButton: true,
+confirmButtonColor: '#3085d6',
+cancelButtonColor: '#d33',
+confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+if (result.isConfirmed) {
+  // Perform the delete action here
+  var settings = {
+"url": "/ingredient/"+id,
+"method": "DELETE",
+"timeout": 0,
+};
+$.ajax({
+    ...settings,
+    statusCode: {
+        200: function(response) {
+            console.log(response);
+            console.log("Request was successful");
+            $('#top-modal').modal('hide');
+           
+            fetch()
+            Swal.fire('Deleted!', 'Ingredient Deleted Successfully!', 'success');
+        },
+    },
+    success: function(data) {
+        // $('#myModal').reset();
+        // Additional success handling if needed
+    },
+    error: function(xhr, textStatus, errorThrown) {
+        console.log(xhr)
+        Swal.fire(
+            'Server Error!',
+            'Ingredient Not Deleted',
+            'error'
+        )
+    }
+});
+
+ 
+}
+});
+
 }
 </script>

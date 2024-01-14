@@ -1169,6 +1169,15 @@ route.get('/sub_plan', (req, res, next) => {
 route.get('/dishes', (req, res, next) => {
     res.render('admin/dish', { title: 'Dashboard' });
 })
+route.get('/order', (req, res, next) => {
+    res.render('admin/orders', { title: 'Dashboard'});
+})
+route.get('/users', (req, res, next) => {
+    res.render('admin/users', { title: 'Dashboard'});
+})
+route.get('/promo_code', (req, res, next) => {
+    res.render('admin/promocode', { title: 'Dashboard'});
+})
 route.get('/auth-login', (req, res, next) => {
     res.render('auth/auth-login', { title: 'Login In', layout: false })
 })
