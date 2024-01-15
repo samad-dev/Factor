@@ -1172,6 +1172,9 @@ route.get('/dishes', (req, res, next) => {
 route.get('/order', (req, res, next) => {
     res.render('admin/orders', { title: 'Dashboard'});
 })
+route.get('/weekly_menu', (req, res, next) => {
+    res.render('admin/weekly_menu', { title: 'Weekly'});
+})
 route.get('/users', (req, res, next) => {
     res.render('admin/users', { title: 'Dashboard'});
 })
