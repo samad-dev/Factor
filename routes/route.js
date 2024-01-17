@@ -549,13 +549,13 @@ route.post('/dish', (req, res) => {
             res.json({ message: 'Dish added successfully', id: result.insertId });
 
         }
-       
+
 
     });
 });
 route.put('/dish/:id', (req, res) => {
     const { id } = req.params;
-    const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs  } = req.body;
+    const { dish_name, total_calories, description, instructions, allergens, add_on, label, ingredient_id, qty, nut_id, nqty, prefs } = req.body;
     console.log(ingredient_id);
     var ingredient_ids = ingredient_id.split(',');
     console.log(ingredient_ids.length);
@@ -769,7 +769,7 @@ route.put('/customer/:id', (req, res) => {
     const { id } = req.params;
     const { first_name, last_name, address, address2, city, state, zipcode, phone_number, payment_method, card_verified } = req.body;
     // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
-    db.query('UPDATE `factor75`.`customers` SET first_name` = "'+first_name+'",`last_name` = "'+last_name+'",`address` = "'+address+'",`address2` = "'+address2+'",`city` = "'+city+'",`state` = "'+state+'",`zipcode` = "'+zipcode+'",`phone_number` = "'+phone_number+'",`payment_method` = "'+payment_method+'",`card_verified` = "'+card_verified+'" WHERE `id` = ' + id + ';', (err) => {
+    db.query('UPDATE `factor75`.`customers` SET first_name` = "' + first_name + '",`last_name` = "' + last_name + '",`address` = "' + address + '",`address2` = "' + address2 + '",`city` = "' + city + '",`state` = "' + state + '",`zipcode` = "' + zipcode + '",`phone_number` = "' + phone_number + '",`payment_method` = "' + payment_method + '",`card_verified` = "' + card_verified + '" WHERE `id` = ' + id + ';', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -794,7 +794,7 @@ route.get('/orders', (req, res) => {
         res.json(results);
     });
 
-    
+
 });
 route.get('/orders_c/:customer_id', (req, res) => {
     const { customer_id } = req.params;
@@ -803,11 +803,11 @@ route.get('/orders_c/:customer_id', (req, res) => {
         res.json(results);
     });
 
-    
+
 });
 route.get('/orders/:id', (req, res) => {
     const { id } = req.params;
-    db.query('SELECT p.plan_name,p.no_meals,p.shipping_fee,p.price,o.*,c.`user_id`,c.`first_name`,c.`last_name`,c.`address`,c.`address2`,c.`city`,c.`state`,c.`zipcode`,c.`phone_number`,c.`payment_method`,c.`card_verified` FROM factor75.orders o inner join plans p on p.id = o.plan_id inner join customers c on c.id = o.customer_id WHERE o.id = ?', [id], async (err, results) => {   
+    db.query('SELECT p.plan_name,p.no_meals,p.shipping_fee,p.price,o.*,c.`user_id`,c.`first_name`,c.`last_name`,c.`address`,c.`address2`,c.`city`,c.`state`,c.`zipcode`,c.`phone_number`,c.`payment_method`,c.`card_verified` FROM factor75.orders o inner join plans p on p.id = o.plan_id inner join customers c on c.id = o.customer_id WHERE o.id = ?', [id], async (err, results) => {
         if (err) {
             res.json({ message: err, status: 500 });
         } else {
@@ -817,7 +817,7 @@ route.get('/orders/:id', (req, res) => {
                 try {
                     const results2 = await querydishes(data.id);
                     const results3 = await queryaddons(data.id);
-                   
+
                     data.dishes = results2;
                     data.add_on = results3;
                     results[a] = data;
@@ -826,7 +826,7 @@ route.get('/orders/:id', (req, res) => {
                     return;
                 }
             }
-            
+
 
             res.json(results);
         }
@@ -862,7 +862,7 @@ route.get('/orders/:id', (req, res) => {
 });
 // Create a new user
 route.post('/orders', (req, res) => {
-    const { customer_id, order_from, order_to, plan_id, status, order_dish, dish_dates,order_addon } = req.body;
+    const { customer_id, order_from, order_to, plan_id, status, order_dish, dish_dates, order_addon } = req.body;
     console.log(dish_dates);
     var dishes = JSON.parse(order_dish);
     console.log(dishes.length);
@@ -906,7 +906,7 @@ route.post('/orders', (req, res) => {
 });
 route.put('/orders/:id', (req, res) => {
     const { id } = req.params;
-    const { order_from, order_to, plan_id, status, order_dish, dish_dates,order_addon } = req.body;
+    const { order_from, order_to, plan_id, status, order_dish, dish_dates, order_addon } = req.body;
     console.log(dish_dates);
     var dishes = JSON.parse(order_dish);
     console.log(dishes.length);
@@ -950,7 +950,7 @@ route.put('/orders/:id', (req, res) => {
         });
 
     }
-    db.query('UPDATE `factor75`.`orders` SET `order_from` = "'+order_from+'", `order_to` = "'+order_to+'", `plan_id` = "'+plan_id+'", `status` = "'+status+'" WHERE `id` = ' + id + ';', (err) => {
+    db.query('UPDATE `factor75`.`orders` SET `order_from` = "' + order_from + '", `order_to` = "' + order_to + '", `plan_id` = "' + plan_id + '", `status` = "' + status + '" WHERE `id` = ' + id + ';', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
@@ -1021,21 +1021,21 @@ route.put('/dish_orders/:id', (req, res) => {
 
 
 route.get('/week', (req, res) => {
-    db.query('Select * from weekly_menu', (err, results) => {
+    db.query('SELECT wm.*,d.id as dish_id,d.dish_name FROM factor75.week_dishes wd join dish d on d.id = wd.dish_id join weekly_menu wm on wm.id = wd.week_id;', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
 });
 route.get('/week/:id', (req, res) => {
     const { id } = req.params;
-    db.query('SELECT * FROM weekly_menu WHERE id = ?', [id], (err, results) => {
+    db.query('SELECT wm.*,d.id as dish_id,d.dish_name FROM factor75.week_dishes wd join dish d on d.id = wd.dish_id join weekly_menu wm on wm.id = wd.week_id where wm.id = ?', [id], (err, results) => {
         if (err) throw err;
         res.json(results[0]);
     });
 });
 // Create a new user
 route.post('/week', (req, res) => {
-    const { label, datefrom, dateto,dishes } = req.body;
+    const { label, datefrom, dateto, dishes } = req.body;
     var dish = JSON.parse(dishes);
     console.log(dish.length);
     db.query('INSERT INTO `factor75`.`weekly_menu`(`label`,`datefrom`,`dateto`) VALUES (?,?,?)', [label, datefrom, dateto], (err, result) => {
@@ -1059,21 +1059,36 @@ route.post('/week', (req, res) => {
 
         }
 
+
     });
 });
 route.put('/week/:id', (req, res) => {
     const { id } = req.params;
-    const { username, email, password, usertype } = req.body;
-    console.log("UPDATE `users` SET `username` = '" + username + "' and email = '" + email + "' and password = '" + password + "' and user_type = '" + usertype + "' WHERE `id` = " + id + ";");
-    db.query('UPDATE `factor75`.`users` SET `username` = "' + username + '",`email` = "' + email + '",`password` = "' + password + '", `user_type` = "' + usertype + '" WHERE `id` = ' + id + ';', (err) => {
+    const { label, datefrom, dateto, dishes} = req.body;
+    var dish = JSON.parse(dishes);
+    console.log(dish.length);
+    db.query('DELETE FROM week_dishes WHERE week_id = ?', [id], (err) => {
+        if (err) throw err;
+        res.json({ message: 'Week deleted successfully' });
+    });
+    for (var i = 0; i < dish.length; i++) {
+        console.log(dish[i]);
+        db.query('INSERT INTO `factor75`.`week_dishes` (`week_id`,`dish_id`) VALUES (?,?)', [result.insertId, dish[i]], (err2, result2) => {
+            if (err2) {
+                res.json({ message: err, status: 500 })
+            }
+        });
+    }
+    db.query('UPDATE `factor75`.`weekly_menu` SET `label` = "' + label + '" and `datefrom` = "' + datefrom + '" and `dateto` = "' + dateto + '" WHERE id = ' + id + '', (err) => {
         if (err) {
 
             res.json({ message: err, status: 500 })
         }
         else {
-            res.json({ message: 'User updated successfully' });
+            res.json({ message: 'Order Status Updated successfully' });
         }
     });
+
 });
 route.delete('/week/:id', (req, res) => {
     const { id } = req.params;
@@ -1099,27 +1114,14 @@ route.get('/purchase/:id', (req, res) => {
 });
 // Create a new user
 route.post('/purchase', (req, res) => {
-    const { label, datefrom, dateto,dishes } = req.body;
-    var dish = JSON.parse(dishes);
-    console.log(dish.length);
-    db.query('INSERT INTO `factor75`.`weekly_menu`(`label`,`datefrom`,`dateto`) VALUES (?,?,?)', [label, datefrom, dateto], (err, result) => {
+    const { ingredient_id, purchased_on, rate, qty,total } = req.body;
+    db.query('INSERT INTO `factor75`.`purchasing` (`ing_id`,`pur_on`,`rate`,`qty`,`total`) VALUES (?,?,?,?,?)', [ingredient_id, purchased_on, rate, qty,total], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
 
         }
         else {
-            for (var i = 0; i < dish.length; i++) {
-                console.log(dish[i]);
-                db.query('INSERT INTO `factor75`.`week_dishes` (`week_id`,`dish_id`) VALUES (?,?)', [result.insertId, dish[i]], (err2, result2) => {
-                    if (err2) {
-                        res.json({ message: err, status: 500 })
-                    }
-
-
-                });
-
-            }
-            res.json({ message: 'Week Meals successfully', id: result.insertId });
+            res.json({ message: 'Purchase Added successfully', id: result.insertId });
 
         }
 
@@ -1141,11 +1143,24 @@ route.put('/purchase/:id', (req, res) => {
 });
 route.delete('/purchase/:id', (req, res) => {
     const { id } = req.params;
-    db.query('DELETE FROM weekly_menu WHERE id = ?', [id], (err) => {
+    db.query('DELETE FROM purchasing WHERE id = ?', [id], (err) => {
         if (err) throw err;
-        res.json({ message: 'Week deleted successfully' });
+        res.json({ message: 'Purchase deleted successfully' });
     });
 });
+route.post('/login', (req, res) => {
+    const { email,password } = req.body;
+    db.query("SELECT * FROM factor75.users where email = ? and password = ?", [email,password], (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
+
+
+
+
+
 
 
 route.get('/', (req, res, next) => {
@@ -1170,16 +1185,16 @@ route.get('/dishes', (req, res, next) => {
     res.render('admin/dish', { title: 'Dashboard' });
 })
 route.get('/order', (req, res, next) => {
-    res.render('admin/orders', { title: 'Dashboard'});
+    res.render('admin/orders', { title: 'Dashboard' });
 })
 route.get('/weekly_menu', (req, res, next) => {
-    res.render('admin/weekly_menu', { title: 'Weekly'});
+    res.render('admin/weekly_menu', { title: 'Weekly' });
 })
 route.get('/users', (req, res, next) => {
-    res.render('admin/users', { title: 'Dashboard'});
+    res.render('admin/users', { title: 'Dashboard' });
 })
 route.get('/promo_code', (req, res, next) => {
-    res.render('admin/promocode', { title: 'Dashboard'});
+    res.render('admin/promocode', { title: 'Dashboard' });
 })
 route.get('/auth-login', (req, res, next) => {
     res.render('auth/auth-login', { title: 'Login In', layout: false })
