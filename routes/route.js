@@ -1190,6 +1190,12 @@ route.get('/order', (req, res, next) => {
 route.get('/weekly_menu', (req, res, next) => {
     res.render('admin/weekly_menu', { title: 'Weekly' });
 })
+route.get('/purchasing', (req, res, next) => {
+    res.render('admin/purchasing', { title: 'Purchasing' });
+})
+route.get('/all_customer', (req, res, next) => {
+    res.render('admin/customer', { title: 'Customer' });
+})
 route.get('/users', (req, res, next) => {
     res.render('admin/users', { title: 'Dashboard' });
 })
