@@ -22,7 +22,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h1 class="header-title" class="mb-6" style="font-size: 20px;">Users</h1>
+                <h1 class="header-title" class="mb-6" style="font-size: 20px;">Customers</h1>
                 <br>
                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#top-modal" onclick="clearModalFields()">Add</button>
                 <br>
@@ -33,10 +33,16 @@
                     <thead>
                         <tr>
                             <th>S NO#</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th>Password</th>
-                            <th>User Type</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Address</th>
+                            <th>Address 2</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Zip Code</th>
+                            <th>Contact</th>
+                            <th>Payment Method</th>
+                            <th>Card Verified</th>
                             <th>Created At</th>
                             <th>Updated At</th>
                             <th>Edit</th>
@@ -61,7 +67,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="padding:10px 20px;" >
             <div class="modal-header">
-                <h4 class="modal-title" id="topModalLabel">Add Users</h4>
+                <h4 class="modal-title" id="topModalLabel">Add Customers</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -257,7 +263,7 @@ $.ajax(settings).done(function(response) {
 }
 function fetch(){
 var settings = {
-    "url": "/user",
+    "url": "/customer",
     "method": "GET",
     "timeout": 0,
 };
@@ -269,10 +275,16 @@ $.ajax(settings).done(function(response) {
     $.each(response, function(index, data) {
         table.row.add([
             index + 1,
-            data.username,
-            data.email,
-            data.password,
-            data.user_type,
+            data.first_name,
+            data.last_name,
+            data.address,
+            data.address2,
+            data.city,
+            data.state,
+            data.zipcode,
+            data.phone_number,
+            data.payment_method,
+            data.card_verified,
             data.created_at,
             data.updated_at,
             '<button type="button"id="edit" name="edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="edit(' +
@@ -360,3 +372,4 @@ $.ajax({
     
 }
 </script>
+c

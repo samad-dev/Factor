@@ -44,6 +44,9 @@
               <th>Allergens</th>
               <th>Add On</th>
               <th>Label</th>
+              <th>Ingredients</th>
+              <th>Nuterients</th>
+              <th>Preferences</th>
               <th>Instruction</th>
               <th>Description</th>
               <th>Created At</th>
@@ -95,10 +98,10 @@
       <div class="col-6 pb-3">
         <label for="" style="font-size: 16px;">Add On</label>
         <!-- <input type="text" class="form-control" id="addon"> -->
-        <select id="addon" name="addon" class="select2 form-control select2-multiple" data-toggle="select2"  data-placeholder="Choose ...">
-            <option value="">Select</option>
-            <option value="1">Yes</option>
-            <option value="0">No</option>
+        <select id="addon" name="addon" class="select2 form-control select2-multiple" data-toggle="select2" data-placeholder="Choose ...">
+          <option value="">Select</option>
+          <option value="1">Yes</option>
+          <option value="0">No</option>
         </select>
       </div>
       <div class="col-6 pb-3">
@@ -277,14 +280,14 @@
       });
 
       // Now ingredientIds array contains all the values
-    //   console.log(ingredient_id);
+      //   console.log(ingredient_id);
 
       var ingredient_qty = $('input[name="ingredient_qty[]"]').map(function() {
         return parseInt($(this).val());
       }).get();
-    //   var nut_id = $('input[name="nut_id[]"]').map(function() {
-    //     return parseInt($(this).val());
-    //   }).get();
+      //   var nut_id = $('input[name="nut_id[]"]').map(function() {
+      //     return parseInt($(this).val());
+      //   }).get();
 
       var nut_id = [];
 
@@ -327,7 +330,7 @@
       console.log(preference)
       console.log(editorContent)
 
-      
+
       var fileInput = $("#fileUpload")[0];
       var file = fileInput.files[0];
       console.log(file)
@@ -466,6 +469,22 @@
       console.log(response);
       table.clear().draw();
       $.each(response, function(index, data) {
+
+
+        var ingredientsArray = $.map(data.ingre, function(item) {
+          return item.ingredient;
+        });
+
+        var nutArray = $.map(data.nutrient, function(item) {
+          return item.nutrient;
+        });
+        var prefArray = $.map(data.prefs, function(item) {
+          return item.preference;
+        });
+
+        // Log the resulting array to the console
+        console.log(ingredientsArray.join(', '));
+
         table.row.add([
           index + 1,
           data.dish_name,
@@ -473,6 +492,9 @@
           data.allergens,
           data.add_on,
           data.label,
+          ingredientsArray.join(', '),
+          nutArray.join(', '),
+          prefArray.join(', '),
           data.instructions,
           data.description,
           data.created_at,
