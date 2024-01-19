@@ -1294,7 +1294,7 @@ route.get('/users', (req, res, next) => {
     res.render('admin/users', { title: 'Dashboard' });
 })
 route.get('/promo_code', (req, res, next) => {
-    res.render('admin/promocode', { title: 'Dashboard' });
+    res.render('admin/promo_codes', { title: 'Promo Code' });
 })
 route.get('/auth-login', (req, res, next) => {
     res.render('auth/auth-login', { title: 'Login In', layout: false })
