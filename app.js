@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const upload = require('express-fileupload');
 const dotenv = require('dotenv');
 
+
 dotenv.config({ path: "./config.env" });
 app.use(cors());
 app.set('view engine', 'ejs');

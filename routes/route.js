@@ -1,6 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
-
+const cron = require('node-cron');
 const route = express.Router();
 const db = mysql.createConnection({
     host: 'localhost',
@@ -9,6 +9,17 @@ const db = mysql.createConnection({
     database: 'factor75',
 });
 
+
+const nodemailer = require('nodemailer');
+
+// Create a transporter using SMTP or other transport mechanisms
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Change this to your email service provider
+  auth: {
+    user: 'abdulsamadq67@gmail.com', // Your email address
+    pass: 'fuylxituupmxupny' // Your email password or application-specific password
+  }
+});
 
 
 db.connect((err) => {
@@ -753,12 +764,25 @@ route.get('/customer/:id', (req, res) => {
 });
 // Create a new user
 route.post('/customer', (req, res) => {
-    const { user_id, first_name, last_name, address, address2, city, state, zipcode, phone_number, payment_method, card_verified } = req.body;
+    const { user_id, first_name, last_name, address, address2, city, state, zipcode, phone_number, payment_method, card_verified,prefs } = req.body;
+    var pref = JSON.parse(prefs);
+    
     db.query('INSERT INTO `customers`(`user_id`,`first_name`,`last_name`,`address`,`address2`,`city`,`state`,`zipcode`,`phone_number`,`payment_method`,`card_verified`) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [user_id, first_name, last_name, address, address2, city, state, zipcode, phone_number, payment_method, card_verified], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
         }
         else {
+            for (var i = 0; i < pref.length; i++) {
+                console.log(pref[i]);
+                db.query('INSERT INTO `factor75`.`customer_prefs` (`customer_id`,`prefs`) VALUES (?,?)', [result.insertId, pref[i]], (err2, result2) => {
+                    if (err2) {
+                        res.json({ message: err, status: 500 })
+                    }
+
+
+                });
+
+            }
             res.json({ message: 'Customer added successfully', id: result.insertId });
 
         }
@@ -864,6 +888,7 @@ route.get('/orders/:id', (req, res) => {
 route.post('/orders', (req, res) => {
     const { customer_id, order_from, order_to, plan_id, status, order_dish, dish_dates, order_addon } = req.body;
     console.log(dish_dates);
+    
     var dishes = JSON.parse(order_dish);
     console.log(dishes.length);
     var order_addons = JSON.parse(order_addon);
@@ -989,7 +1014,7 @@ route.delete('/orders/:id', (req, res) => {
         res.json({ message: 'Order deleted successfully' });
     });
 });
-route.put('/dish_orders/:id', (req, res) => {
+route.put('/dish_orders/:id', (req, res) => {   
     const { id } = req.params;
     const { status } = req.body;
     // console.log("UPDATE `users` SET `username` = '"+username+"' and email = '"+email+"' and password = '"+password+"' and user_type = '"+usertype+"' WHERE `id` = "+id+";");  
@@ -1156,6 +1181,75 @@ route.post('/login', (req, res) => {
     });
 });
 
+route.get('/promo', (req, res) => {
+    db.query('Select * from promo_codes', (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+route.get('/promo/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM promo_codes WHERE id = ?', [id], (err, results) => {
+        if (err) throw err;
+        res.json(results[0]);
+    });
+});
+// Create a new user
+route.post('/promo', (req, res) => {
+    const { promo_name, discount_per, valid_till} = req.body;
+    db.query('INSERT INTO `factor75`.`promo_codes` (`promo_name`,`discount_per`,`valid_till`) VALUES (?,?,?)', [promo_name, discount_per, valid_till], (err, result) => {
+        if (err) {
+            res.json({ message: err, status: 500 })
+
+        }
+        else {
+            res.json({ message: 'Promo Code Created successfully', id: result.insertId });
+
+        }
+
+    });
+});
+route.put('/promo/:id', (req, res) => {
+    const { id } = req.params;
+    const { username, email, password, usertype } = req.body;
+    console.log("UPDATE `users` SET `username` = '" + username + "' and email = '" + email + "' and password = '" + password + "' and user_type = '" + usertype + "' WHERE `id` = " + id + ";");
+    db.query('UPDATE `factor75`.`users` SET `username` = "' + username + '",`email` = "' + email + '",`password` = "' + password + '", `user_type` = "' + usertype + '" WHERE `id` = ' + id + ';', (err) => {
+        if (err) {
+
+            res.json({ message: err, status: 500 })
+        }
+        else {
+            res.json({ message: 'User updated successfully' });
+        }
+    });
+});
+route.delete('/promo/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM promo_codes WHERE id = ?', [id], (err) => {
+        if (err) throw err;
+        res.json({ message: 'Promo Code deleted successfully' });
+    });
+});
+
+
+route.get('/mail',(req,res)=>{
+    const mailOptions = {
+        from: 'abdulsamadq67@gmail.com', // Sender address
+        to: 'abdulsamadq67@gmail.com', // List of recipients
+        subject: 'Hello ✔', // Subject line
+        text: 'Hello world?', // Plain text body
+        html: '<b>Hello world?</b>' // HTML body
+      };
+      
+      // Send mail with defined transport object
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.error('Error:', error);
+        }
+        res.json(true);
+        console.log('Message sent: %s', info.messageId);
+      });
+});
 
 
 
@@ -1199,5 +1293,21 @@ route.get('/promo_code', (req, res, next) => {
 route.get('/auth-login', (req, res, next) => {
     res.render('auth/auth-login', { title: 'Login In', layout: false })
 })
+
+
+
+
+
+
+
+
+
+function logMessage() {
+    console.log('Cron job executed at:', new Date().toLocaleString());
+    }
+
+    cron.schedule('* * * * *', () => {
+        // logMessage();
+        });
 
 module.exports = route;
