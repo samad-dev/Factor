@@ -886,15 +886,15 @@ route.get('/orders/:id', (req, res) => {
 });
 // Create a new user
 route.post('/orders', (req, res) => {
-    const { customer_id, order_from, order_to, plan_id, status, order_dish, dish_dates, order_addon } = req.body;
-    console.log(dish_dates);
+    const { customer_id, order_from, order_to, plan_id, status, order_dish,dish_quantity, order_addon } = req.body;
+    // console.log(dish_dates);
     
     var dishes = JSON.parse(order_dish);
     console.log(dishes.length);
     var order_addons = JSON.parse(order_addon);
     console.log(order_addons.length);
-    var dates = JSON.parse(dish_dates);
-    console.log(dates);
+    var dish_quantiti = JSON.parse(dish_quantity);
+    console.log(dish_quantiti);
     db.query('INSERT INTO `orders`(`customer_id`,`order_from`,`order_to`,`plan_id`,`status`) VALUES (?,?,?,?,?)', [customer_id, order_from, order_to, plan_id, status], (err, result) => {
         if (err) {
             res.json({ message: err, status: 500 })
@@ -902,8 +902,8 @@ route.post('/orders', (req, res) => {
         else {
 
             for (var i = 0; i < dishes.length; i++) {
-                console.log(dates[i]);
-                db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`order_datetime`) VALUES (?,?,?)', [result.insertId, dishes[i], dates[i]], (err2, result2) => {
+                // console.log(dates[i]);
+                db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`dish_qty`) VALUES (?,?,?)', [result.insertId, dishes[i], dish_quantiti[i]], (err2, result2) => {
                     if (err2) {
                         res.json({ message: err, status: 500 })
                     }
@@ -913,7 +913,7 @@ route.post('/orders', (req, res) => {
 
             }
             for (var i = 0; i < order_addons.length; i++) {
-                console.log(dates[i]);
+                // console.log(dates[i]);
                 db.query('INSERT INTO `factor75`.`order_addon` (`order_id`,`add_on`) VALUES (?,?)', [result.insertId, order_addons[i]], (err2, result2) => {
                     if (err2) {
                         res.json({ message: err, status: 500 })
@@ -931,13 +931,13 @@ route.post('/orders', (req, res) => {
 });
 route.put('/orders/:id', (req, res) => {
     const { id } = req.params;
-    const { order_from, order_to, plan_id, status, order_dish, dish_dates, order_addon } = req.body;
-    console.log(dish_dates);
+    const { order_from, order_to, plan_id, status, order_dish, dish_quantity, order_addon } = req.body;
+    console.log(dish_quantity);
     var dishes = JSON.parse(order_dish);
     console.log(dishes.length);
     var order_addons = JSON.parse(order_addon);
     console.log(order_addons.length);
-    var dates = JSON.parse(dish_dates);
+    var dates = JSON.parse(dish_quantity);
     console.log(dates);
     db.query('DELETE FROM order_dishes WHERE order_id = ?', [id], (err2, result2) => {
         if (err2) {
@@ -955,7 +955,7 @@ route.put('/orders/:id', (req, res) => {
     });
     for (var i = 0; i < dishes.length; i++) {
         console.log(dates[i]);
-        db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`order_datetime`) VALUES (?,?,?)', [id, dishes[i], dates[i]], (err2, result2) => {
+        db.query('INSERT INTO `factor75`.`order_dishes` (`order_id`,`dish_id`,`dish_qty`) VALUES (?,?,?)', [id, dishes[i], dates[i]], (err2, result2) => {
             if (err2) {
                 res.json({ message: err, status: 500 })
             }
