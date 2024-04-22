@@ -363,20 +363,36 @@
         statusCode: {
           200: function(response) {
             console.log(response);
-            console.log("Request was successful");
+
+            var jsonObject = JSON.parse(response);
+
+            var status = jsonObject.status;
+            console.log("Status: " + status);
+
+            if (status == 200) {
+              console.log("Request was successful");
+              $('#top-modal').modal('hide');
+              // fetch();
+
+              Swal.fire(
+                'Success!',
+                'Record Created Successfully',
+                'success'
+              )
+              setTimeout(function() {
+
+                location.reload();
 
 
-            Swal.fire(
-              'Success!',
-              'Record Created Successfully',
-              'success'
-            )
-            setTimeout(function() {
+              }, 2000);
 
-              location.reload();
-
-
-            }, 2000);
+            } else {
+              Swal.fire(
+                'Error!',
+                'Something went wrong. Please try again later.',
+                'error'
+              );
+            }
           },
         },
         success: function(data) {

@@ -147,15 +147,36 @@
         statusCode: {
           200: function(response) {
             console.log(response);
-            console.log("Request was successful");
-            $('#top-modal').modal('hide');
-            fetch();
 
-            Swal.fire(
-              'Success!',
-              'Ingredient Created Successfully',
-              'success'
-            )
+            var jsonObject = JSON.parse(response);
+
+            var status = jsonObject.status;
+            console.log("Status: " + status);
+
+            if (status == 200) {
+              console.log("Request was successful");
+              $('#top-modal').modal('hide');
+              // fetch();
+
+              Swal.fire(
+                'Success!',
+                'Record Created Successfully',
+                'success'
+              )
+              setTimeout(function() {
+
+                location.reload();
+
+
+              }, 2000);
+
+            } else {
+              Swal.fire(
+                'Error!',
+                'Something went wrong. Please try again later.',
+                'error'
+              );
+            }
           },
         },
         success: function(data) {
@@ -362,5 +383,4 @@
     });
 
   }
-
 </script>

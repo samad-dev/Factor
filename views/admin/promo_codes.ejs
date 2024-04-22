@@ -129,98 +129,135 @@
     var update_id = $('#hidden').val();
     // alert(document.getElementById("ingredient").value);
     // alert(document.getElementById("unit").value)
+    var promoCode = document.getElementById("promo_code").value;
+    var discount = document.getElementById("discount").value;
+    var validTill = document.getElementById("valid_name").value;
 
-    if (update_id == "") {
-      var form = new FormData();
-      form.append("promo_name", document.getElementById("promo_code").value);
-      form.append("discount_per", document.getElementById("discount").value);
-      form.append("valid_till", document.getElementById("valid_name").value);
+    // Check if all fields are filled
+    if (promoCode && discount && validTill) {
+      if (update_id == "") {
+        var form = new FormData();
+        form.append("promo_name", document.getElementById("promo_code").value);
+        form.append("discount_per", document.getElementById("discount").value);
+        form.append("valid_till", document.getElementById("valid_name").value);
 
 
-      var settings = {
-        "url": "/promo",
-        "method": "POST",
-        "timeout": 0,
-        "processData": false,
-        "mimeType": "multipart/form-data",
-        "contentType": false,
-        "data": form
-      };
+        var settings = {
+          "url": "/promo",
+          "method": "POST",
+          "timeout": 0,
+          "processData": false,
+          "mimeType": "multipart/form-data",
+          "contentType": false,
+          "data": form
+        };
 
-      $.ajax({
-        ...settings,
-        statusCode: {
-          200: function(response) {
-            console.log(response);
+        $.ajax({
+          ...settings,
+          statusCode: {
+            200: function(response) {
+
+              console.log(response);
+
+              var jsonObject = JSON.parse(response);
+
+              var status = jsonObject.status;
+              console.log("Status: " + status);
+
+              if (status == 200) {
+                console.log("Request was successful");
+                $('#top-modal').modal('hide');
+                // fetch();
+
+                Swal.fire(
+                  'Success!',
+                  'Record Created Successfully',
+                  'success'
+                )
+                setTimeout(function() {
+
+                  location.reload();
+
+
+                }, 2000);
+
+              } else {
+                Swal.fire(
+                  'Error!',
+                  'Something went wrong. Please try again later.',
+                  'error'
+                );
+              }
+
+            },
+          },
+          success: function(data) {
+            // $('#myModal').reset();
+            // Additional success handling if needed
+          },
+          error: function(xhr, status, error) {
+            console.log("Request failed with status: " + status);
+
+            if (xhr.status === 0) {
+              // This might indicate no internet connection
+              Swal.fire(
+                'Error!',
+                'No internet connection or server not reachable.',
+                'error'
+              );
+            } else {
+              // Handle other types of errors
+              Swal.fire(
+                'Error!',
+                'Something went wrong. Please try again later.',
+                'error'
+              );
+            }
+          }
+        });
+      } else {
+        var form = new FormData();
+        form.append("name", document.getElementById("ingredient").value);
+        form.append("unit", document.getElementById("unit").value);
+
+
+
+        var settings = {
+          "url": "/ingredient/" + update_id, // Fixed the URL concatenation
+          "method": "PUT",
+          "timeout": 0,
+          "processData": false,
+          "mimeType": "multipart/form-data",
+          "contentType": false,
+          "data": form
+        };
+
+        $.ajax({
+          ...settings,
+          success: function(data) {
+            console.log(data);
             console.log("Request was successful");
             $('#top-modal').modal('hide');
-            // fetch();
-
+            fetch();
             Swal.fire(
               'Success!',
-              'Ingredient Created Successfully',
+              'Ingredient Updated Successfully',
               'success'
-            )
-            setTimeout(function() {
-
-              location.reload();
-
-
-            }, 2000);
+            );
           },
-        },
-        success: function(data) {
-          // $('#myModal').reset();
-          // Additional success handling if needed
-        },
-        error: function(xhr, textStatus, errorThrown) {
-          console.log(xhr)
-          Swal.fire(
-            'Server Error!',
-            'Ingredient Not Created',
-            'error'
-          )
-        }
-      });
+          error: function(xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            Swal.fire(
+              'Server Error!',
+              'Ingredient Not Updated',
+              'error'
+            );
+          }
+        });
+      }
     } else {
-      var form = new FormData();
-      form.append("name", document.getElementById("ingredient").value);
-      form.append("unit", document.getElementById("unit").value);
-
-
-
-      var settings = {
-        "url": "/ingredient/" + update_id, // Fixed the URL concatenation
-        "method": "PUT",
-        "timeout": 0,
-        "processData": false,
-        "mimeType": "multipart/form-data",
-        "contentType": false,
-        "data": form
-      };
-
-      $.ajax({
-        ...settings,
-        success: function(data) {
-          console.log(data);
-          console.log("Request was successful");
-          $('#top-modal').modal('hide');
-          fetch();
-          Swal.fire(
-            'Success!',
-            'Ingredient Updated Successfully',
-            'success'
-          );
-        },
-        error: function(xhr, textStatus, errorThrown) {
-          console.log(xhr);
-          Swal.fire(
-            'Server Error!',
-            'Ingredient Not Updated',
-            'error'
-          );
-        }
-      });
+      // If any field is empty, show an alert or handle it accordingly
+      alert("Please fill in all fields");
     }
 
   }
@@ -284,7 +321,7 @@
         table.row.add([
           index + 1,
           data.promo_name,
-          data.discount_per+" %",
+          data.discount_per + " %",
           data.valid_till,
           data.created_at,
           data.updated_at,
@@ -355,10 +392,10 @@
               Swal.fire('Deleted!', 'Ingredient Deleted Successfully!', 'success');
               setTimeout(function() {
 
-location.reload();
+                location.reload();
 
 
-}, 2000);
+              }, 2000);
             },
           },
           success: function(data) {

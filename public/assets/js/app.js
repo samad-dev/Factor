@@ -1,5 +1,5 @@
 /**
-* Theme: Jidox - Responsive Bootstrap 5 Admin Dashboard
+* Theme: Factor75 - Responsive Bootstrap 5 Admin Dashboard
 * Author: Coderthemes
 * Module/App: Main Js
 */
@@ -372,7 +372,7 @@
 })(jQuery)
 
 /**
-* Theme: Jidox - Responsive Bootstrap 5 Admin Dashboard
+* Theme: Factor75 - Responsive Bootstrap 5 Admin Dashboard
 * Author: Coderthemes
 * Module/App: Layout Js
 */

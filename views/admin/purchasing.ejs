@@ -218,24 +218,38 @@
 
       $.ajax({
         ...settings,
-        success: function(data) {
-          console.log(data);
-          console.log("Request was successful");
-          $('#top-modal').modal('hide');
+        success: function(response) {
+          console.log(response);
 
-          fetch()
+          var jsonObject = JSON.parse(response);
 
-          Swal.fire(
-            'Success!',
-            'Created Successfully',
-            'success'
-          );
-          setTimeout(function() {
+          var status = jsonObject.status;
+          console.log("Status: " + status);
 
-            location.reload();
+          if (status == 200) {
+            console.log("Request was successful");
+            $('#top-modal').modal('hide');
+            // fetch();
+
+            Swal.fire(
+              'Success!',
+              'Record Created Successfully',
+              'success'
+            )
+            setTimeout(function() {
+
+              location.reload();
 
 
-          }, 2000);
+            }, 2000);
+
+          } else {
+            Swal.fire(
+              'Error!',
+              'Something went wrong. Please try again later.',
+              'error'
+            );
+          }
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr);
@@ -417,10 +431,7 @@
     });
   }
 
-  
 
-
-  
 
 
   function all_selection() {

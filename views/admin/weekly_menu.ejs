@@ -279,20 +279,36 @@
         statusCode: {
           200: function(response) {
             console.log(response);
-            console.log("Request was successful");
+
+            var jsonObject = JSON.parse(response);
+
+            var status = jsonObject.status;
+            console.log("Status: " + status);
+
+            if (status == 200) {
+              console.log("Request was successful");
+              $('#top-modal').modal('hide');
+              // fetch();
+
+              Swal.fire(
+                'Success!',
+                'Record Created Successfully',
+                'success'
+              )
+              setTimeout(function() {
+
+                location.reload();
 
 
-            Swal.fire(
-              'Success!',
-              'Record Created Successfully',
-              'success'
-            )
-            setTimeout(function() {
+              }, 2000);
 
-              location.reload();
-
-
-            }, 2000);
+            } else {
+              Swal.fire(
+                'Error!',
+                'Something went wrong. Please try again later.',
+                'error'
+              );
+            }
           },
         },
         success: function(data) {
@@ -333,24 +349,38 @@
 
       $.ajax({
         ...settings,
-        success: function(data) {
-          console.log(data);
-          console.log("Request was successful");
-          $('#top-modal').modal('hide');
+        success: function(response) {
+          console.log(response);
 
-          fetch()
+          var jsonObject = JSON.parse(response);
 
-          Swal.fire(
-            'Success!',
-            'Created Successfully',
-            'success'
-          );
-          setTimeout(function() {
+          var status = jsonObject.status;
+          console.log("Status: " + status);
 
-            location.reload();
+          if (status == 200) {
+            console.log("Request was successful");
+            $('#top-modal').modal('hide');
+            // fetch();
+
+            Swal.fire(
+              'Success!',
+              'Record Created Successfully',
+              'success'
+            )
+            setTimeout(function() {
+
+              location.reload();
 
 
-          }, 2000);
+            }, 2000);
+
+          } else {
+            Swal.fire(
+              'Error!',
+              'Something went wrong. Please try again later.',
+              'error'
+            );
+          }
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr);
@@ -364,61 +394,62 @@
     }
     //   });
   }
+
   function delete_(id) {
 
-Swal.fire({
-  title: 'Are you sure?',
-  text: 'You won\'t be able to revert this!',
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Yes, delete it!'
-}).then((result) => {
-  if (result.isConfirmed) {
-    // Perform the delete action here
-    var settings = {
-      "url": "/week/" + id,
-      "method": "DELETE",
-      "timeout": 0,
-    };
-    $.ajax({
-      ...settings,
-      statusCode: {
-        200: function(response) {
-          console.log(response);
-          console.log("Request was successful");
-          $('#top-modal').modal('hide');
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform the delete action here
+        var settings = {
+          "url": "/week/" + id,
+          "method": "DELETE",
+          "timeout": 0,
+        };
+        $.ajax({
+          ...settings,
+          statusCode: {
+            200: function(response) {
+              console.log(response);
+              console.log("Request was successful");
+              $('#top-modal').modal('hide');
 
-          fetch()
-          Swal.fire('Deleted!', 'Deleted Successfully!', 'success');
-          setTimeout(function() {
+              fetch()
+              Swal.fire('Deleted!', 'Deleted Successfully!', 'success');
+              setTimeout(function() {
 
-location.reload();
+                location.reload();
 
 
-}, 2000);
-        },
-      },
-      success: function(data) {
-        // $('#myModal').reset();
-        // Additional success handling if needed
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log(xhr)
-        Swal.fire(
-          'Server Error!',
-          'Not Deleted',
-          'error'
-        )
+              }, 2000);
+            },
+          },
+          success: function(data) {
+            // $('#myModal').reset();
+            // Additional success handling if needed
+          },
+          error: function(xhr, textStatus, errorThrown) {
+            console.log(xhr)
+            Swal.fire(
+              'Server Error!',
+              'Not Deleted',
+              'error'
+            )
+          }
+        });
+
+
       }
     });
 
-
   }
-});
-
-}
 
 
   function edit(id) {
@@ -463,8 +494,8 @@ location.reload();
           data.id +
           ')"  class="btn btn-soft-secondary "style="padding:5px 10px;" ><i class="ri ri-pencil-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
           '<button type="button"id="edit" name="edit"  onclick="delete_(' +
-            data.id +
-            ')"  class="btn btn-soft-danger "style="padding:5px 10px;" ><i class="ri  ri-delete-bin-2-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
+          data.id +
+          ')"  class="btn btn-soft-danger "style="padding:5px 10px;" ><i class="ri  ri-delete-bin-2-fill font-size-16 align-middle" style="font-size:16px;"></i></button>',
         ]).draw(false);
       });
     });
@@ -492,14 +523,13 @@ location.reload();
     });
   }
 
-  
-  // Handle click event of the "Remove" button within a set of fields
-
 
   // Handle click event of the "Remove" button within a set of fields
 
 
- 
+  // Handle click event of the "Remove" button within a set of fields
+
+
 
 
   function get_prefs() {
